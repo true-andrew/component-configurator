@@ -52,7 +52,7 @@ ComponentConfigurator.prototype.submitChanges = function (ev) {
     this.editingComponent.renderComponent();
 }
 
-ComponentConfigurator.prototype.editComponent = function (component) {
+ComponentConfigurator.prototype.createEditForm = function (component) {
     if (this.editingComponent !== undefined) {
         return;
     }
@@ -61,15 +61,15 @@ ComponentConfigurator.prototype.editComponent = function (component) {
     this.initEditForm();
     const componentProps = component[component.container.dataset.propsId];
     for (let key in componentProps) {
-        const formElement = document.createElement('div');
-        const elHeading = document.createElement('span');
-        elHeading.textContent = key + ' ';
-        const inputField = document.createElement('input');
-        inputField.type = determineFieldTypeByKey(key);
-        inputField.value = componentProps[key];
-        inputField.dataset.key = key;
-        formElement.append(elHeading, inputField);
-        this.editForm.append(formElement);
+        const formChild = document.createElement('div');
+        const formChildHeading = document.createElement('span');
+        formChildHeading.textContent = key + ' ';
+        const formChildInput = document.createElement('input');
+        formChildInput.type = determineFieldTypeByKey(key);
+        formChildInput.value = componentProps[key];
+        formChildInput.dataset.key = key;
+        formChild.append(formChildHeading, formChildInput);
+        this.editForm.append(formChild);
     }
 
     const submitChangesButton = document.createElement('button');
@@ -109,7 +109,7 @@ function Component() {
     editBtn.textContent = 'Edit Component';
     editBtn.addEventListener('click', () => {
         configurator.show();
-        configurator.editComponent(this);
+        configurator.createEditForm(this);
     });
     component.append(editBtn);
     component.dataset.propsId = 'componentProps';
