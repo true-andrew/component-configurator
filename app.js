@@ -3,6 +3,11 @@ function ComponentConfigurator() {
     element.id = 'configurator';
     element.style.cssText = 'position: absolute;top: 0;right: 0;' +
       'display: none;background-color: #003399;padding: 25px;color: #e5e5e5;';
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.textContent = 'Close';
+    closeBtn.addEventListener('click', this);
+    element.append(closeBtn);
     document.body.append(element);
     this.container = element;
 }
@@ -13,6 +18,8 @@ ComponentConfigurator.prototype.editForm = undefined;
 ComponentConfigurator.prototype.handleEvent = function (ev) {
     if (ev.type === 'submit') {
         this.submitChanges(ev);
+    } else if (ev.type === 'click') {
+        this.closeConfigurator();
     }
 }
 
@@ -22,6 +29,12 @@ ComponentConfigurator.prototype.show = function () {
 
 ComponentConfigurator.prototype.hide = function () {
     this.container.style.display = 'none';
+}
+
+ComponentConfigurator.prototype.closeConfigurator = function () {
+    this.hide();
+    this.editingComponent = undefined;
+    this.editForm.remove();
 }
 
 ComponentConfigurator.prototype.initEditForm = function () {
@@ -51,6 +64,7 @@ ComponentConfigurator.prototype.editComponent = function (component) {
         const elHeading = document.createElement('span');
         elHeading.textContent = key + ' ';
         const inputField = document.createElement('input');
+        inputField.type = determineFieldTypeByKey(key);
         inputField.value = componentProps[key];
         inputField.dataset.key = key;
         formElement.append(elHeading, inputField);
@@ -68,22 +82,34 @@ ComponentConfigurator.prototype.editComponent = function (component) {
     this.container.append(this.editForm);
 }
 
+function determineFieldTypeByKey(key) {
+    const regExp = /color/i;
+    if (regExp.test(key)) {
+        return 'color';
+    } else {
+        return 'number';
+    }
+}
+
 const configurator = new ComponentConfigurator();
 
 //Custom Div Element
 function Component() {
     this.componentProps = {
-        width: "500px",
-        height: "500px",
-        padding: '25px',
+        width: "500",
+        height: "500",
+        padding: '25',
         backgroundColor: '#ff0000',
-        borderRadius: '25px',
+        borderRadius: '25',
     }
 
     const component = document.createElement('div');
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit Component';
-    editBtn.addEventListener('click', handleEditClick);
+    editBtn.addEventListener('click', () => {
+        configurator.show();
+        configurator.editComponent(this);
+    });
     component.append(editBtn);
     component.dataset.propsId = 'componentProps';
 
@@ -94,13 +120,13 @@ function Component() {
 
 Component.prototype.renderComponent = function () {
     for (let key in this.componentProps) {
-        this.container.style[key] = this.componentProps[key];
+        const type = determineFieldTypeByKey(key);
+        if (type === 'number') {
+            this.container.style[key] = this.componentProps[key] + 'px';
+        } else {
+            this.container.style[key] = this.componentProps[key];
+        }
     }
 }
 
 const component = new Component();
-
-function handleEditClick(ev) {
-    configurator.show();
-    configurator.editComponent(component);
-}
