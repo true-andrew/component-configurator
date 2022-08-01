@@ -1,15 +1,8 @@
+// import {createElement} from "./helper-functions.js";
+
 function ComponentConfigurator() {
-    const element = document.createElement('div');
-    element.id = 'configurator';
-    element.style.cssText = 'position: absolute;top: 0;right: 0;' +
-      'display: none;background-color: #003399;padding: 25px;color: #e5e5e5;';
-    const closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.textContent = 'Close';
-    closeBtn.addEventListener('click', this);
-    element.append(closeBtn);
-    document.body.append(element);
-    this.container = element;
+    this.container = this.initContainer();
+    document.body.append(this.container);
 }
 
 ComponentConfigurator.prototype.editingComponent = undefined;
@@ -22,6 +15,18 @@ ComponentConfigurator.prototype.handleEvent = function (ev) {
     } else if (ev.type === 'click') {
         this.closeConfigurator();
     }
+}
+
+ComponentConfigurator.prototype.initContainer = function () {
+    const element = document.createElement('div');
+    element.style.cssText = 'position: absolute;top: 0;right: 0;' +
+      'display: none;background-color: #003399;padding: 25px;color: #e5e5e5;';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.dataset.action = 'closeConfigurator';
+    closeBtn.addEventListener('click', this);
+    element.append(closeBtn);
+    return element;
 }
 
 ComponentConfigurator.prototype.show = function () {
@@ -49,7 +54,7 @@ ComponentConfigurator.prototype.submitChanges = function (ev) {
         const input = ev.target[i];
         componentProps[input.dataset.key] = input.value;
     }
-    this.editingComponent.renderComponent();
+    this.editingComponent.applyStyles();
 }
 
 ComponentConfigurator.prototype.createEditForm = function (component) {
@@ -102,7 +107,7 @@ function Component() {
         padding: '25',
         backgroundColor: '#ff0000',
         borderRadius: '25',
-    }
+    };
 
     const component = document.createElement('div');
     const editBtn = document.createElement('button');
@@ -115,11 +120,11 @@ function Component() {
     component.dataset.propsId = 'componentProps';
 
     this.container = component;
-    this.renderComponent();
+    this.applyStyles();
     document.body.append(this.container);
 }
 
-Component.prototype.renderComponent = function () {
+Component.prototype.applyStyles = function () {
     for (let key in this.componentProps) {
         const type = determineFieldTypeByKey(key);
         if (type === 'number') {
