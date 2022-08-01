@@ -13,6 +13,7 @@ function ComponentConfigurator() {
 }
 
 ComponentConfigurator.prototype.editingComponent = undefined;
+ComponentConfigurator.prototype.container = undefined;
 ComponentConfigurator.prototype.editForm = undefined;
 
 ComponentConfigurator.prototype.handleEvent = function (ev) {
