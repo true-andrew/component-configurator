@@ -1,0 +1,9 @@
+#configurator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+    background-color: #003399;
+    padding: 25px;
+    color: #e5e5e5;
+}
