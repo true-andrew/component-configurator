@@ -53,26 +53,19 @@ ComponentConfigurator.prototype.submitChanges = function (ev) {
   ev.preventDefault();
   const styles = {};
   const formElements = ev.target;
-  const elementsToUpdate = [];
 
   for (let i = 0, len = formElements.length - 1; i < len; i++) {
     const element = formElements[i];
     if (element.tagName !== 'FIELDSET') {
       styles[element.dataset.cssName] = element.value + (element.dataset.units || '');
-      elementsToUpdate.push(element);
-      console.log(element.dataset.path);
     }
   }
 
   this.editingComponent.applyStyles(styles);
-  this.editingComponent.updateProps(elementsToUpdate);
+  this.editingComponent.updateProps(styles);
 }
 
 ComponentConfigurator.prototype.createEditForm = function (component) {
-  if (this.editingComponent !== undefined) {
-    return;
-  }
-
   this.editingComponent = component;
   this.initEditForm();
   createFormFromTree(this.editingComponent.componentProps, this.editForm);
@@ -85,7 +78,7 @@ ComponentConfigurator.prototype.createEditForm = function (component) {
 
   this.editForm.addEventListener('submit', this);
 
-  this.container.append(this.editForm);
+  this.container.replaceChildren(this.editForm);
 }
 
 const configurator = new ComponentConfigurator();
@@ -125,7 +118,6 @@ Component.prototype.applyStyles = function (styles) {
 }
 
 Component.prototype.updateProps = function (props) {
-
 }
 
 const getStylesFromTree = function (node, styles) {
@@ -175,15 +167,6 @@ const createFormFromTree = function (node, currentNode) {
   }
   return null;
 };
-
-function getElementFromTreeByPath(src, target) {
-  let result = src;
-  const pathArr = target.split('.');
-  for (let i = 1, len = pathArr.length; i < len; i++) {
-    result = result['children'][pathArr[i]];
-  }
-  return result;
-}
 
 const component = new Component();
 const component2 = new Component();
