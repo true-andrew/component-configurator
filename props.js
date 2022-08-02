@@ -1,5 +1,5 @@
 export default {
-  "title": "Categories",
+  "title": "Component Options",
   "htmlName": "fieldset",
   "children": [
     {
@@ -7,7 +7,7 @@ export default {
       "htmlName": "fieldset",
       "children": [
         {
-          "title": "dimensions",
+          "title": "Dimensions",
           "htmlName": "fieldset",
           "children": [
             {
@@ -29,7 +29,7 @@ export default {
           ]
         },
         {
-          "title": "borders",
+          "title": "Borders",
           "htmlName": "fieldset",
           "children": [
             {
@@ -65,15 +65,15 @@ export default {
               "type": "select",
               "children": [
                 {
-                  "title": "dashed",
+                  "title": "solid",
                   "htmlName": "option"
+                },
+                {
+                  "title": "dashed",
+                  "htmlName": "option",
                 },
                 {
                   "title": "dotted",
-                  "htmlName": "option"
-                },
-                {
-                  "title": "solid",
                   "htmlName": "option"
                 },
                 {

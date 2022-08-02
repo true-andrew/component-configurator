@@ -51,12 +51,21 @@ ComponentConfigurator.prototype.initEditForm = function () {
 //TODO improve submitting
 ComponentConfigurator.prototype.submitChanges = function (ev) {
   ev.preventDefault();
-  const componentProps = this.editingComponent[this.editingComponent.container.dataset.propsId];
-  for (let i = 0, len = ev.target.length - 1; i < len; i++) {
-    const input = ev.target[i];
-    componentProps[input.dataset.key] = input.value;
+  const styles = {};
+  const formElements = ev.target;
+  const elementsToUpdate = [];
+
+  for (let i = 0, len = formElements.length - 1; i < len; i++) {
+    const element = formElements[i];
+    if (element.tagName !== 'FIELDSET') {
+      styles[element.dataset.cssName] = element.value + (element.dataset.units || '');
+      elementsToUpdate.push(element);
+      console.log(element.dataset.path);
+    }
   }
-  this.editingComponent.applyStyles();
+
+  this.editingComponent.applyStyles(styles);
+  this.editingComponent.updateProps(elementsToUpdate);
 }
 
 ComponentConfigurator.prototype.createEditForm = function (component) {
@@ -66,13 +75,7 @@ ComponentConfigurator.prototype.createEditForm = function (component) {
 
   this.editingComponent = component;
   this.initEditForm();
-  const categories = component.componentProps.categories;
-  for (let key in categories) {
-
-  }
-  for (let i = 0, len = Object.keys(categories).length; i < len; i++) {
-    console.log(len);
-  }
+  createFormFromTree(this.editingComponent.componentProps, this.editForm);
 
   const submitChangesButton = document.createElement('button');
   submitChangesButton.type = 'submit';
@@ -83,15 +86,6 @@ ComponentConfigurator.prototype.createEditForm = function (component) {
   this.editForm.addEventListener('submit', this);
 
   this.container.append(this.editForm);
-}
-
-function determineFieldTypeByKey(key) {
-  const regExp = /color/i;
-  if (regExp.test(key)) {
-    return 'color';
-  } else {
-    return 'number';
-  }
 }
 
 const configurator = new ComponentConfigurator();
@@ -117,41 +111,35 @@ function Component() {
 }
 
 Component.prototype.renderComponent = function () {
-
-    searchStyles(this.componentProps, this.container.style);
-    console.log(this.container.style.borderStyle);
+  const styles = {};
+  getStylesFromTree(this.componentProps, styles);
+  this.applyStyles(styles);
 }
 
-const searchStyles = function (node, styles) {
+Component.prototype.applyStyles = function (styles) {
+  this.container.style.display = 'none';
+  for (let key in styles) {
+    this.container.style[key] = styles[key];
+  }
+  this.container.style.display = '';
+}
+
+Component.prototype.updateProps = function (props) {
+
+}
+
+const getStylesFromTree = function (node, styles) {
   if (node.hasOwnProperty('cssName')) {
-    // console.log(node);
     styles[node.cssName] = node.value + node.units;
   }
   if (node.children) {
     for (let i = 0; i < node.children.length; i++) {
-      searchStyles(node.children[i], styles);
-    }
-  }}
-
-Component.prototype.applyStyles = function (styles) {
-  for (let key in this.componentProps) {
-    const type = determineFieldTypeByKey(key);
-    if (type === 'number') {
-      this.container.style[key] = this.componentProps[key] + 'px';
-    } else {
-      this.container.style[key] = this.componentProps[key];
+      getStylesFromTree(node.children[i], styles);
     }
   }
 }
 
-const component = new Component();
-
-
-let rootNode = document.createElement('form');
-let currentNode = rootNode;
-
-const createFormFromTree = function (node) {
-  // console.log("Visiting Node " + tree.title);
+const createFormFromTree = function (node, currentNode) {
   const el = document.createElement(node.htmlName);
   currentNode.append(el);
   if (node.htmlName === 'fieldset') {
@@ -165,33 +153,37 @@ const createFormFromTree = function (node) {
     el.before(label);
     el.value = node.value;
     el.type = node.type;
+    el.dataset.cssName = node.cssName;
+    el.dataset.units = node.units;
     const br = document.createElement('br');
     el.after(br);
   } else if (node.htmlName === 'select') {
     const label = document.createElement('label');
     label.textContent = node.title;
     el.before(label);
+    el.dataset.cssName = node.cssName;
     currentNode = el;
   } else if (node.htmlName === 'option') {
     el.textContent = node.title;
   }
 
   // Recurse with all children
-  traverse(node, createFormFromTree);
-
-  currentNode = el.parentElement;
-  // console.log("Went through all children of " + tree.title + ", returning to it's parent.");
+  if (node.children) {
+    for (let i = 0; i < node.children.length; i++) {
+      createFormFromTree(node.children[i], currentNode);
+    }
+  }
   return null;
 };
 
-function traverse(node, func) {
-  if (node.children) {
-    for (let i = 0; i < node.children.length; i++) {
-      func(node.children[i]);
-    }
+function getElementFromTreeByPath(src, target) {
+  let result = src;
+  const pathArr = target.split('.');
+  for (let i = 1, len = pathArr.length; i < len; i++) {
+    result = result['children'][pathArr[i]];
   }
+  return result;
 }
 
-createFormFromTree(props);
-
-document.body.append(rootNode);
+const component = new Component();
+const component2 = new Component();
