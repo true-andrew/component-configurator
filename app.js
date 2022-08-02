@@ -1,4 +1,4 @@
-// import {createElement} from "./helper-functions.js";
+import props from './props.js';
 
 function ComponentConfigurator() {
     this.container = this.initContainer();
@@ -101,16 +101,10 @@ const configurator = new ComponentConfigurator();
 
 //Custom Div Element
 function Component() {
-    this.componentProps = {
-        width: "500",
-        height: "500",
-        padding: '25',
-        backgroundColor: '#ff0000',
-        borderRadius: '25',
-    };
-
+    this.componentProps = props;
     const component = document.createElement('div');
     const editBtn = document.createElement('button');
+    component.dataset.props = JSON.stringify(props);
     editBtn.textContent = 'Edit Component';
     editBtn.addEventListener('click', () => {
         configurator.show();
@@ -120,11 +114,16 @@ function Component() {
     component.dataset.propsId = 'componentProps';
 
     this.container = component;
+    this.renderComponent();
     this.applyStyles();
     document.body.append(this.container);
 }
 
-Component.prototype.applyStyles = function () {
+Component.prototype.renderComponent = function () {
+
+}
+
+Component.prototype.applyStyles = function (styles) {
     for (let key in this.componentProps) {
         const type = determineFieldTypeByKey(key);
         if (type === 'number') {
