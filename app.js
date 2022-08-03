@@ -9,6 +9,7 @@ ComponentConfigurator.prototype.editingComponent = undefined;
 ComponentConfigurator.prototype.container = undefined;
 ComponentConfigurator.prototype.editForm = undefined;
 
+//TODO доделать
 ComponentConfigurator.prototype.handleEvent = function (ev) {
   if (ev.type === 'submit') {
     this.submitChanges(ev);
@@ -62,13 +63,17 @@ ComponentConfigurator.prototype.submitChanges = function (ev) {
   }
 
   this.editingComponent.applyStyles(styles);
-  this.editingComponent.updateProps(styles);
+  //TODO
+
+  // this.editingComponent.updateProps(styles);
 }
 
 ComponentConfigurator.prototype.createEditForm = function (component) {
   this.editingComponent = component;
   this.initEditForm();
-  createFormFromTree(this.editingComponent.componentProps, this.editForm);
+
+  const docFragment = createForm(this.editingComponent.componentProps);
+  this.editForm.append(docFragment);
 
   const submitChangesButton = document.createElement('button');
   submitChangesButton.type = 'submit';
@@ -85,6 +90,7 @@ const configurator = new ComponentConfigurator();
 
 //Custom Div Element
 function Component() {
+  // this.componentName = 'sdjsdjsjd' // sdjsdjsjd_props
   this.componentProps = props;
   const component = document.createElement('div');
   const editBtn = document.createElement('button');
@@ -99,7 +105,6 @@ function Component() {
 
   this.container = component;
   this.renderComponent();
-  this.applyStyles();
   document.body.append(this.container);
 }
 
@@ -117,10 +122,21 @@ Component.prototype.applyStyles = function (styles) {
   this.container.style.display = '';
 }
 
-Component.prototype.updateProps = function (props) {
+Component.prototype.updateProperty = function (property) {
+  /// conponent.mewthodToChangeProp
+  /// localstarage.setItem
+  // switch (propertyName) {
+  //   case "color":
+  //     domEl.style.background = 'propertyValue'
+  //     break
+  //   default:
+  //     break
+  // }
 }
 
 const getStylesFromTree = function (node, styles) {
+  // TODO  this.component.getProperties || localstorage.getItem sjon parse
+
   if (node.hasOwnProperty('cssName')) {
     styles[node.cssName] = node.value + node.units;
   }
@@ -131,9 +147,52 @@ const getStylesFromTree = function (node, styles) {
   }
 }
 
+const createForm = function (elementsArr) {
+  const result = document.createDocumentFragment();
+  const categories = {};
+
+  for (let i = 0, len = elementsArr.length; i < len; i++) {
+    const element = elementsArr[i];
+    if (!categories.hasOwnProperty(element.category)) {
+      categories[element.category] = [];
+    }
+    const propertyControl = createPropControl(element);
+    categories[element.category].push(propertyControl);
+  }
+
+  for (let key in categories) {
+    const category = createCategory(key);
+    category.append(...categories[key]);
+    result.append(category);
+  }
+
+  return result;
+}
+
+function createCategory(name) {
+  const fieldset = document.createElement('fieldset');
+  const legend = document.createElement('legend');
+  legend.textContent = name;
+  fieldset.append(legend);
+  return fieldset;
+}
+
+function createPropControl(obj) {
+  const propContainer = document.createElement('div');
+  const element = document.createElement('input');
+  const title = document.createElement('label');
+  title.textContent = obj.title;
+  element.type = obj.type;
+  element.value = obj.value;
+  propContainer.append(title, element);
+  return propContainer;
+}
+
 const createFormFromTree = function (node, currentNode) {
   const el = document.createElement(node.htmlName);
   currentNode.append(el);
+  // TODO
+  //const propertyControl = createPropControl(node.htmlName) // getPropsControl("positiveInt")
   if (node.htmlName === 'fieldset') {
     currentNode = el;
     const legend = document.createElement('legend');
