@@ -5,16 +5,8 @@
     display: none;
     background-color: #F1f1f1;
     padding: 10px;
-}
-
-form {
-    display: flex;
     flex-direction: column;
-}
-
-button {
-    margin-top: 10px;
-    align-self: center;
+    align-items: center;
 }
 
 label, legend {
