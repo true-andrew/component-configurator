@@ -45,30 +45,31 @@ ComponentConfigurator.prototype.hide = function () {
   this.container.style.display = 'none';
 }
 
-ComponentConfigurator.prototype.closeConfigurator = function () {
-  this.hide();
-  this.editingComponent = undefined;
-  this.editForm.remove();
-}
-
-ComponentConfigurator.prototype.initEditForm = function () {
+ComponentConfigurator.prototype.initEditForm = function (component) {
   this.editForm = document.createElement('form');
-}
 
-ComponentConfigurator.prototype.editComponent = function (component) {
-  this.editingComponent = component;
-  this.initEditForm();
+  const elementsArr = JSON.parse(window.localStorage.getItem(component.componentName));
+  const form = this.createForm(elementsArr);
+  this.editForm.append(form);
 
   const closeBtn = document.createElement('button');
   closeBtn.textContent = 'Close';
-  closeBtn.dataset.action = 'closeConfigurator';
+  closeBtn.dataset.action = 'hide';
   closeBtn.addEventListener('click', this);
 
-  const elementsArr = JSON.parse(window.localStorage.getItem(component.componentName));
-  const docFragment = this.createForm(elementsArr);
-  this.editForm.append(docFragment);
-
   this.container.replaceChildren(this.editForm, closeBtn);
+}
+
+/*
+componentName.width = '450',
+localstorage.getItem('componentName');
+localstorage.getItem('componentName.???');
+ */
+
+ComponentConfigurator.prototype.editComponent = function (component) {
+  this.editingComponent = component;
+
+  this.initEditForm(component);
 
   this.show();
 }

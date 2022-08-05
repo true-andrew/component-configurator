@@ -24,17 +24,11 @@ Component.prototype.renderComponent = function () {
 
   for (let i = 0, len = props.length; i < len; i++) {
     const prop = props[i];
-    this.container.style[prop.title] = prop.type === 'number' ? prop.value + 'px' : prop.value;
+    const value = prop.type === 'number' ? prop.value + 'px' : prop.value;
+    if (this.container.style[prop.title] !== value) {
+      this.container.style[prop.title] = value;
+    }
   }
-
-}
-
-Component.prototype.applyStyles = function (styles) {
-  this.container.style.display = 'none';
-  for (let key in styles) {
-    this.container.style[key] = styles[key];
-  }
-  this.container.style.display = '';
 }
 
 Component.prototype.updateProperty = function (propName, value) {
@@ -42,12 +36,13 @@ Component.prototype.updateProperty = function (propName, value) {
 
   for (let i = 0, len = props.length; i < len; i++) {
     const prop = props[i];
-    if (prop.title === propName && prop.value !== value) {
+    if (prop.title === propName) {
       prop.value = value;
     }
   }
 
   window.localStorage.setItem(this.componentName, JSON.stringify(props));
+
   this.renderComponent();
 }
 
