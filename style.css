@@ -1,14 +1,111 @@
+body {
+    font-family: Roboto, sans-serif;
+}
+
 #configurator {
     position: absolute;
     top: 0;
     right: 0;
     display: none;
-    background-color: #F1f1f1;
+    background-color: whitesmoke;
+    color: #222222;
     padding: 10px;
     flex-direction: column;
     align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
+    /*transition: 0.3s ease-out;*/
 }
 
-label, legend {
-    margin-right: 5px;
+#configurator h2 {
+    font-size: 2rem;
+    letter-spacing: 0.1rem;
+    margin: 15px 0;
+}
+
+button {
+    font-family: Roboto, sans-serif;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: whitesmoke;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: azure;
+}
+
+button:active {
+    background-color: lightgray;
+}
+
+#configurator .close-btn {
+    background-color: lightgray;
+    color: #222222;
+    margin-top: 10px;
+}
+
+#configurator .close-btn:hover {
+    background-color: #c0c0c0;
+}
+
+label,
+input,
+button,
+select,
+legend,
+textarea {
+    font-size: 1.3rem;
+    line-height: 1.2;
+}
+
+fieldset {
+    border-radius: 5px;
+}
+
+.form__group {
+    position: relative;
+    padding: 15px 0 0;
+    margin-top: 10px;
+}
+
+.form__group:nth-child(2) {
+    margin-top: 0;
+}
+
+.form__field {
+    width: 100%;
+    height: 43px;
+    border-width: 2px;
+    border-radius: 5px;
+    outline: none;
+    padding: 7px 7px;
+    box-sizing: border-box;
+    background: transparent;
+    transition: border-color 0.3s;
+}
+
+.form__field:focus {
+    border-color: #11998e;
+}
+.form__field:focus + .form__label {
+    color: #11998e;
+}
+
+.form__field:focus + .form__label,
+.form__field:valid + .form__label {
+    top: 5px;
+    font-size: 1rem;
+    background-color: whitesmoke;
+}
+
+.form__label {
+    position: absolute;
+    top: 24px;
+    left: 5px;
+    background-color: transparent;
+    font-size: 1.3rem;
+    padding: 0 3px;
+    transition: top 0.2s ease, font-size 0.3s ease, color 0.3s ease;
 }
