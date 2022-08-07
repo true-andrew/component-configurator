@@ -1,56 +1,60 @@
 import {props1, props2} from "./props.js";
 import {configurator} from "./configurator.js";
 
-function Component(name, props) {
-  this.componentName = name;
+class Component {
+  componentName = undefined;
+  container = undefined;
 
-  this.loadProperties(props);
+  constructor(name, props) {
+    this.componentName = name;
 
-  const component = document.createElement('div');
-  const editBtn = document.createElement('button');
-  editBtn.textContent = 'Edit Component';
-  editBtn.addEventListener('click', () => {
-    configurator.editComponent(this);
-  });
-  component.append(editBtn);
+    this.loadProperties(props);
 
-  this.container = component;
-  this.renderComponent();
-  document.body.append(this.container);
-}
+    const component = document.createElement('div');
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit Component';
+    editBtn.addEventListener('click', () => {
+      configurator.editComponent(this);
+    });
+    component.append(editBtn);
 
-Component.prototype.renderComponent = function () {
-  const props = JSON.parse(window.localStorage.getItem(this.componentName));
-
-  for (let i = 0, len = props.length; i < len; i++) {
-    const prop = props[i];
-    const value = prop.type === 'number' ? prop.value + 'px' : prop.value;
-    if (this.container.style[prop.title] !== value) {
-      this.container.style[prop.title] = value;
-    }
+    this.container = component;
+    this.renderComponent();
+    document.body.append(this.container);
   }
-}
 
-Component.prototype.updateProperty = function (propName, value) {
-  const props = JSON.parse(window.localStorage.getItem(this.componentName));
+  renderComponent() {
+    const props = JSON.parse(window.localStorage.getItem(this.componentName));
 
-  for (let i = 0, len = props.length; i < len; i++) {
-    const prop = props[i];
-    if (prop.title === propName) {
-      prop.value = value;
+    for (let i = 0, len = props.length; i < len; i++) {
+      const prop = props[i];
+      const value = prop.type === 'number' ? prop.value + 'px' : prop.value;
+      if (this.container.style[prop.title] !== value) {
+        this.container.style[prop.title] = value;
+      }
     }
   }
 
-  window.localStorage.setItem(this.componentName, JSON.stringify(props));
+  updateProperty(propName, value) {
+    const props = JSON.parse(window.localStorage.getItem(this.componentName));
 
-  this.renderComponent();
-}
+    for (let i = 0, len = props.length; i < len; i++) {
+      const prop = props[i];
+      if (prop.title === propName) {
+        prop.value = value;
+      }
+    }
 
-Component.prototype.loadProperties = function (props) {
-  const storage = window.localStorage;
+    window.localStorage.setItem(this.componentName, JSON.stringify(props));
+    this.renderComponent();
+  }
 
-  if (storage.getItem(this.componentName) === null) {
-    storage.setItem(this.componentName, JSON.stringify(props));
+  loadProperties(props) {
+    const storage = window.localStorage;
+
+    if (storage.getItem(this.componentName) === null) {
+      storage.setItem(this.componentName, JSON.stringify(props));
+    }
   }
 }
 
