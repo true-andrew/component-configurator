@@ -5,10 +5,8 @@ class Component {
   componentName = undefined;
   container = undefined;
 
-  constructor(name, props) {
+  constructor(name) {
     this.componentName = name;
-
-    this.loadProperties(props);
 
     const component = document.createElement('div');
     const editBtn = document.createElement('button');
@@ -25,10 +23,11 @@ class Component {
 
   renderComponent() {
     const props = JSON.parse(window.localStorage.getItem(this.componentName));
+    const propsWithoutPx = ['color', 'select'];
 
     for (let i = 0, len = props.length; i < len; i++) {
       const prop = props[i];
-      const value = prop.type === 'number' ? prop.value + 'px' : prop.value;
+      const value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
       if (this.container.style[prop.title] !== value) {
         this.container.style[prop.title] = value;
       }
@@ -51,12 +50,11 @@ class Component {
 
   loadProperties(props) {
     const storage = window.localStorage;
-
-    if (storage.getItem(this.componentName) === null) {
-      storage.setItem(this.componentName, JSON.stringify(props));
-    }
+    storage.setItem(this.componentName, JSON.stringify(props));
   }
 }
 
-const component = new Component('component1', props1);
-const component2 = new Component('component2', props2);
+const component = new Component('component1');
+const component2 = new Component('component2');
+
+// component2.loadProperties(props1);

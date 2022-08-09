@@ -3,10 +3,12 @@ body {
 }
 
 #configurator {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
-    display: none;
+    visibility: hidden;
+    opacity: 0;
+    display: flex;
     background-color: whitesmoke;
     color: #222222;
     padding: 10px;
@@ -14,7 +16,7 @@ body {
     align-items: center;
     height: 100vh;
     box-sizing: border-box;
-    /*transition: 0.3s ease-out;*/
+    transition: opacity 0.3s ease;
 }
 
 #configurator h2 {
@@ -89,6 +91,7 @@ fieldset {
 .form__field:focus {
     border-color: #11998e;
 }
+
 .form__field:focus + .form__label {
     color: #11998e;
 }
@@ -100,10 +103,19 @@ fieldset {
     background-color: whitesmoke;
 }
 
+.form__field:invalid {
+    border-color: red;
+}
+
+.form__field:invalid + .form__label {
+    color: red;
+}
+
 .form__label {
     position: absolute;
     top: 24px;
     left: 5px;
+    cursor: text;
     background-color: transparent;
     font-size: 1.3rem;
     padding: 0 3px;

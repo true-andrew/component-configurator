@@ -2,19 +2,38 @@ export const props1 = [
   {
     "title": "width",
     "value": 500,
-    "type": "number",
+    "max": 1000,
+    "min": 100,
+    "type": "range",
     "category": "Visual"
   },
   {
     "title": "height",
     "value": 500,
-    "type": "number",
+    "max": 1000,
+    "min": 100,
+    "type": "range",
     "category": "Visual"
   },
   {
     "title": "borderRadius",
     "value": 25,
     "type": "number",
+    "category": "Visual"
+  },
+  {
+    "title": "borderStyle",
+    "type": "select",
+    "value": "none",
+    "options": ["none", "dashed", "dotted", "solid", "double"],
+    "category": "Visual"
+  },
+  {
+    "title": "borderWidth",
+    "type": "range",
+    "min": 1,
+    "max": 10,
+    "value": 2,
     "category": "Visual"
   },
   {
