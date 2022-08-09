@@ -1,7 +1,6 @@
-import {props1, props2} from "./props.js";
-import {configurator} from "./configurator.js";
+import {ComponentConfigurator} from "./Configurator.js";
 
-class Component {
+export class CustomComponent {
   componentName = undefined;
   container = undefined;
 
@@ -10,8 +9,9 @@ class Component {
 
     const component = document.createElement('div');
     const editBtn = document.createElement('button');
-    editBtn.textContent = 'Edit Component';
+    editBtn.textContent = 'Edit CustomComponent';
     editBtn.addEventListener('click', () => {
+      const configurator = new ComponentConfigurator();
       configurator.editComponent(this);
     });
     component.append(editBtn);
@@ -53,8 +53,3 @@ class Component {
     storage.setItem(this.componentName, JSON.stringify(props));
   }
 }
-
-const component = new Component('component1');
-const component2 = new Component('component2');
-
-// component2.loadProperties(props1);
