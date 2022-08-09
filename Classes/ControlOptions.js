@@ -12,6 +12,15 @@ export class ControlOption extends EventEmitter {
     this.title = controlOption.title;
   }
 
+  handleEvent(ev) {
+    const eventName = ev.target.dataset.eventName;
+    const data = ev.target;
+    this.emit('optionChanged', {
+      optionName: this.title,
+      optionValue: ev.target.value
+    })
+
+  }
   create() {
     const propContainer = this.createContainer();
     const titleElement = this.createLabel();
@@ -34,8 +43,8 @@ export class ControlOption extends EventEmitter {
   }
 
   initEventListener(element) {
-    // element.addEventListener('change', this);
-    element.addEventListener('change', EventEmitter.handleDOMEvent);
+    element.addEventListener('change', this);
+    // element.addEventListener('change', EventEmitter.handleDOMEvent);
   }
 }
 

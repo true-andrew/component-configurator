@@ -11,11 +11,10 @@ export class CustomComponent {
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit Component';
     editBtn.addEventListener('click', () => {
-      const configurator = new ComponentConfigurator();
-      configurator.editComponent(this);
+      const component = new ComponentConfigurator()
+      component.editComponent(this);
     });
     component.append(editBtn);
-
     this.container = component;
     this.renderComponent();
     document.body.append(this.container);

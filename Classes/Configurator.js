@@ -2,30 +2,13 @@ import {EventEmitter} from "./EventEmitter.js";
 import {ControlOptionRange, ControlOptionNumberColor, ControlOptionSelect} from "./ControlOptions.js";
 
 class ComponentConfigurator extends EventEmitter {
-  static editingComponent = undefined;
-  static container = undefined;
+  editingComponent = undefined;
+  container = undefined;
 
-  constructor() {
-    super();
-    ComponentConfigurator.container = this.initContainer();
-    EventEmitter.on('onclose', this.hide);
-    document.body.append(ComponentConfigurator.container);
-  }
-
-  // handleEvent(ev) {
-  //   super.handleEvent(ev);
-  //   const eventName = 'handleEvent_' + ev.type;
-  //   if (this[eventName] !== undefined) {
-  //     this[eventName](ev);
-  //   } else {
-  //     throw new Error(`Unhandled event: ${ev.type}`);
-  //   }
-  // }
-
-  handleEvent_change(element) {
-    const value = element.value;
-    const propName = element.dataset.propName;
-    ComponentConfigurator.editingComponent.updateProperty(propName, value);
+  handleEvent(e) {
+    if (e.type === 'optionChanged') {
+      this.editingComponent.updateProperty(e.data.optionName, e.data.optionValue);
+    }
   }
 
   // handleEvent_click(ev) {
@@ -44,14 +27,12 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   show() {
-    ComponentConfigurator.container.style.visibility = 'visible';
-    ComponentConfigurator.container.style.opacity = '1';
+    this.container.style.visibility = 'visible';
+    this.container.style.opacity = '1';
   }
 
-  hide() {
-    ComponentConfigurator.container.style.visibility = 'hidden';
-    ComponentConfigurator.container.style.opacity = '0';
-
+  close() {
+    this.container.remove();
   }
 
   makeCloseBtn() {
@@ -60,7 +41,7 @@ class ComponentConfigurator extends EventEmitter {
     // closeBtn.dataset.action = 'hide';
     closeBtn.classList.add('close-btn');
     closeBtn.dataset.eventName = 'onclose';
-    closeBtn.addEventListener('click', EventEmitter.handleDOMEvent);
+    closeBtn.addEventListener('click', this);
     return closeBtn;
   }
 
@@ -73,12 +54,18 @@ class ComponentConfigurator extends EventEmitter {
   renderForm(form) {
     const header = this.makeHeader();
     const closeBtn = this.makeCloseBtn();
-    ComponentConfigurator.container.replaceChildren(header, form, closeBtn);
+    this.container.replaceChildren(header, form, closeBtn);
     this.show();
   }
 
   editComponent(component) {
-    ComponentConfigurator.editingComponent = component;
+    if (this.editingComponent !== undefined) {
+      this.close();
+    }
+    this.container = this.initContainer();
+    this.on('onclose', this.close);
+    document.body.append(this.container);
+    this.editingComponent = component;
     const formFields = this.findFormFields(component);
     const form = this.createForm(formFields);
     this.renderForm(form);
@@ -124,7 +111,7 @@ class ComponentConfigurator extends EventEmitter {
 
   createPropControl(controlOption) {
     const newControl = createControl(controlOption);
-    EventEmitter.on('onchange', this.handleEvent_change);
+    newControl.on('optionChanged', this)
     return newControl.container;
   }
 }
@@ -141,5 +128,4 @@ function createControl(controlOption) {
   return new targetClass(controlOption);
 }
 
-const configurator = new ComponentConfigurator();
 export {ComponentConfigurator};
