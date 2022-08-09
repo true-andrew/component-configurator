@@ -247,7 +247,11 @@ class ControlOptionSelect extends ControlOption {
     const optionElements = [];
     for (let i = 0, len = this.options.length; i < len; i++) {
       const optionEl = document.createElement('option');
-      optionEl.textContent = this.options[i];
+      const optionName = this.options[i];
+      optionEl.textContent = optionName;
+      if(optionName === this.value) {
+        optionEl.selected = true;
+      }
       optionElements.push(optionEl);
     }
     selectElement.append(...optionElements);
