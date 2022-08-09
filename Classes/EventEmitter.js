@@ -1,7 +1,7 @@
 export class EventEmitter {
   static events = {};
 
-  static handleEvent(ev) {
+  static handleDOMEvent(ev) {
     const eventName = ev.target.dataset.eventName;
     const data = ev.target;
     EventEmitter.emit(eventName, data);

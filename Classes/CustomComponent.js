@@ -9,7 +9,7 @@ export class CustomComponent {
 
     const component = document.createElement('div');
     const editBtn = document.createElement('button');
-    editBtn.textContent = 'Edit CustomComponent';
+    editBtn.textContent = 'Edit Component';
     editBtn.addEventListener('click', () => {
       const configurator = new ComponentConfigurator();
       configurator.editComponent(this);

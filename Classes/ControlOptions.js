@@ -35,7 +35,7 @@ export class ControlOption extends EventEmitter {
 
   initEventListener(element) {
     // element.addEventListener('change', this);
-    element.addEventListener('change', EventEmitter.handleEvent);
+    element.addEventListener('change', EventEmitter.handleDOMEvent);
   }
 }
 

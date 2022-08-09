@@ -60,7 +60,7 @@ class ComponentConfigurator extends EventEmitter {
     // closeBtn.dataset.action = 'hide';
     closeBtn.classList.add('close-btn');
     closeBtn.dataset.eventName = 'onclose';
-    closeBtn.addEventListener('click', EventEmitter.handleEvent);
+    closeBtn.addEventListener('click', EventEmitter.handleDOMEvent);
     return closeBtn;
   }
 
