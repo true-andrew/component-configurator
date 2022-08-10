@@ -1,4 +1,5 @@
 import {ComponentConfigurator} from "./Configurator.js";
+const configurator = new ComponentConfigurator();
 
 export class CustomComponent {
   componentName = undefined;
@@ -11,8 +12,7 @@ export class CustomComponent {
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit Component';
     editBtn.addEventListener('click', () => {
-      const component = new ComponentConfigurator()
-      component.editComponent(this);
+      configurator.editComponent(this);
     });
     component.append(editBtn);
     this.container = component;

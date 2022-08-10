@@ -5,20 +5,29 @@ class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
   container = undefined;
 
+  constructor() {
+    super();
+    this.container = this.initContainer();
+    this.on('onclose', this.close);
+    document.body.append(this.container);
+  }
+
   handleEvent(e) {
     if (e.type === 'optionChanged') {
-      this.editingComponent.updateProperty(e.data.optionName, e.data.optionValue);
+      this.editingComponent.updateProperty(e.optionName, e.optionValue);
+    } else if (e.type === 'click') {
+      this.handleEvent_click(e);
     }
   }
 
-  // handleEvent_click(ev) {
-  //   const action = ev.target.dataset.action;
-  //   if (this[action] !== undefined) {
-  //     this[action](ev);
-  //   } else {
-  //     throw new Error(`Unknown Action: ${action}`);
-  //   }
-  // }
+  handleEvent_click(ev) {
+    const action = ev.target.dataset.action;
+    if (this[action] !== undefined) {
+      this[action](ev);
+    } else {
+      throw new Error(`Unknown Action: ${action}`);
+    }
+  }
 
   initContainer() {
     const element = document.createElement('div');
@@ -32,15 +41,15 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   close() {
-    this.container.remove();
+    this.container.style.visibility = 'hidden';
+    this.container.style.opacity = '0';
   }
 
   makeCloseBtn() {
     const closeBtn = document.createElement('button');
     closeBtn.textContent = 'Close';
-    // closeBtn.dataset.action = 'hide';
+    closeBtn.dataset.action = 'close';
     closeBtn.classList.add('close-btn');
-    closeBtn.dataset.eventName = 'onclose';
     closeBtn.addEventListener('click', this);
     return closeBtn;
   }
@@ -59,12 +68,10 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   editComponent(component) {
-    if (this.editingComponent !== undefined) {
-      this.close();
+    if (this.editingComponent === component) {
+      this.show();
+      return;
     }
-    this.container = this.initContainer();
-    this.on('onclose', this.close);
-    document.body.append(this.container);
     this.editingComponent = component;
     const formFields = this.findFormFields(component);
     const form = this.createForm(formFields);

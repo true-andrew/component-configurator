@@ -1,11 +1,6 @@
 export class EventEmitter {
   events = {};
 
-  // static handleDOMEvent(ev) {
-  //
-  //   EventEmitter.emit(eventName, data);
-  // }
-
   on(eventName, fn) {
     if (!this.events[eventName]) {
       this.events[eventName] = [];
@@ -25,13 +20,10 @@ export class EventEmitter {
     if (event) {
       for (let i = 0, len = event.length; i < len; i++) {
         const object = event[i];
-        object.handleEvent({
-          type: eventName,
-          data
-        });
+        object.handleEvent(data);
       }
     } else {
-      throw new Error('Unknown event' + eventName);
+      throw new Error('Unknown event: ' + eventName);
     }
   }
 }

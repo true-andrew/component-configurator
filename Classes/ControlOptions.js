@@ -13,14 +13,13 @@ export class ControlOption extends EventEmitter {
   }
 
   handleEvent(ev) {
-    const eventName = ev.target.dataset.eventName;
-    const data = ev.target;
     this.emit('optionChanged', {
+      type: 'optionChanged',
       optionName: this.title,
-      optionValue: ev.target.value
+      optionValue: ev.target.value,
     })
-
   }
+
   create() {
     const propContainer = this.createContainer();
     const titleElement = this.createLabel();
@@ -44,7 +43,6 @@ export class ControlOption extends EventEmitter {
 
   initEventListener(element) {
     element.addEventListener('change', this);
-    // element.addEventListener('change', EventEmitter.handleDOMEvent);
   }
 }
 
@@ -68,8 +66,6 @@ export class ControlOptionInput extends ControlOption {
     inputElement.id = this.title;
     inputElement.required = true;
     inputElement.type = this.type;
-    inputElement.dataset.propName = this.title;
-    inputElement.dataset.eventName = 'onchange';
     super.initEventListener(inputElement)
     return inputElement;
   }
@@ -128,7 +124,6 @@ export class ControlOptionSelect extends ControlOption {
   createSelect() {
     const selectElement = document.createElement('select');
     selectElement.classList.add('form__field');
-    selectElement.dataset.propName = this.title;
     const optionElements = [];
     for (let i = 0, len = this.options.length; i < len; i++) {
       const optionEl = document.createElement('option');
@@ -140,7 +135,6 @@ export class ControlOptionSelect extends ControlOption {
       optionElements.push(optionEl);
     }
     selectElement.append(...optionElements);
-    selectElement.dataset.eventName = 'onchange';
     super.initEventListener(selectElement);
     return selectElement;
   }
