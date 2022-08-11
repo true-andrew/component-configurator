@@ -1,21 +1,13 @@
-import {ComponentConfigurator} from "./Configurator.js";
-const configurator = new ComponentConfigurator();
+import {EventEmitter} from "./EventEmitter.js";
 
-export class CustomComponent {
+export class CustomComponent extends EventEmitter{
   componentName = undefined;
   container = undefined;
 
   constructor(name) {
+    super();
     this.componentName = name;
-
-    const component = document.createElement('div');
-    const editBtn = document.createElement('button');
-    editBtn.textContent = 'Edit Component';
-    editBtn.addEventListener('click', () => {
-      configurator.editComponent(this);
-    });
-    component.append(editBtn);
-    this.container = component;
+    this.container = document.createElement('div');
     this.renderComponent();
     document.body.append(this.container);
   }

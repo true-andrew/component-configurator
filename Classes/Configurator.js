@@ -4,12 +4,13 @@ import {ControlOptionRange, ControlOptionNumberColor, ControlOptionSelect} from 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
   container = undefined;
+  components = [];
 
   constructor() {
     super();
     this.container = this.initContainer();
-    this.on('onclose', this.close);
     document.body.append(this.container);
+    this.chooseComponent();
   }
 
   handleEvent(e) {
@@ -24,9 +25,22 @@ class ComponentConfigurator extends EventEmitter {
     const action = ev.target.dataset.action;
     if (this[action] !== undefined) {
       this[action](ev);
+    } else if (action === undefined) {
+      if (!ev.composedPath().includes(this.container)) {
+        for (let i = 0, len = this.components.length; i < len; i++) {
+          const component = this.components[i];
+          if (ev.composedPath().includes(component.container)) {
+            this.editComponent(component);
+          }
+        }
+      }
     } else {
-      throw new Error(`Unknown Action: ${action}`);
+      throw new Error(`There is no such action: ${action}`);
     }
+  }
+
+  register(component) {
+    this.components.push(component);
   }
 
   initContainer() {
@@ -35,12 +49,16 @@ class ComponentConfigurator extends EventEmitter {
     return element;
   }
 
+  chooseComponent() {
+    document.body.addEventListener('click', this);
+  }
+
   show() {
     this.container.style.visibility = 'visible';
     this.container.style.opacity = '1';
   }
 
-  close() {
+  hide() {
     this.container.style.visibility = 'hidden';
     this.container.style.opacity = '0';
   }
@@ -48,7 +66,7 @@ class ComponentConfigurator extends EventEmitter {
   makeCloseBtn() {
     const closeBtn = document.createElement('button');
     closeBtn.textContent = 'Close';
-    closeBtn.dataset.action = 'close';
+    closeBtn.dataset.action = 'hide';
     closeBtn.classList.add('close-btn');
     closeBtn.addEventListener('click', this);
     return closeBtn;
