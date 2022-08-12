@@ -67,6 +67,7 @@ export class ControlOptionInput extends ControlOption {
 
   constructor(controlOption) {
     super(controlOption);
+    this.container = this.create(this.title, this.type, this.value);
   }
 
   create(title, type, value) {
@@ -76,12 +77,13 @@ export class ControlOptionInput extends ControlOption {
     return controlElement;
   }
 
-  createInput(title, type) {
+  createInput(title, type, value) {
     const inputElement = document.createElement('input');
     inputElement.classList.add('form__field');
     inputElement.id = title;
     inputElement.required = true;
     inputElement.type = type;
+    inputElement.value = value;
     super.initEventListener(inputElement)
     return inputElement;
   }
@@ -99,23 +101,10 @@ export class ControlOptionRange extends ControlOptionInput {
   }
 
   createInput() {
-    const input = super.createInput(this.title, this.type);
+    const input = super.createInput(this.title, this.type, this.value);
     input.max = this.max;
     input.min = this.min;
     input.value = this.value;
-    return input;
-  }
-}
-
-export class ControlOptionNumberColor extends ControlOptionInput {
-  constructor(controlOption) {
-    super(controlOption);
-    this.container = super.create(this.title, this.type, this.value);
-  }
-
-  createInput(title, type, value) {
-    const input = super.createInput(title, type);
-    input.value = value;
     return input;
   }
 }
@@ -156,7 +145,7 @@ export class ControlOptionSelect extends ControlOption {
   }
 }
 
-export class ControlOptionArray extends ControlOptionNumberColor {
+export class ControlOptionArray extends ControlOptionInput {
   sides = ['Top', 'Right', 'Bottom', 'Left'];
   mode = undefined;
   propsContainer = undefined;

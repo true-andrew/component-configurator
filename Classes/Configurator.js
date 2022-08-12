@@ -1,9 +1,9 @@
 import {EventEmitter} from "./EventEmitter.js";
 import {
   ControlOptionRange,
-  ControlOptionNumberColor,
   ControlOptionSelect,
-  ControlOptionArray
+  ControlOptionArray,
+  ControlOptionInput
 } from "./ControlOptions.js";
 
 class ComponentConfigurator extends EventEmitter {
@@ -147,8 +147,8 @@ class ComponentConfigurator extends EventEmitter {
 }
 
 const options = {
-  'number': ControlOptionNumberColor,
-  'color': ControlOptionNumberColor,
+  'number': ControlOptionInput,
+  'color': ControlOptionInput,
   'range': ControlOptionRange,
   'select': ControlOptionSelect,
   'array': ControlOptionArray,
