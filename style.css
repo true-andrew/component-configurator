@@ -6,6 +6,8 @@ body {
     position: fixed;
     top: 0;
     right: 0;
+    width: 100%;
+    max-width: 350px;
     visibility: hidden;
     opacity: 0;
     display: flex;
@@ -119,4 +121,18 @@ fieldset {
     font-size: 1.3rem;
     padding: 0 3px;
     transition: top 0.2s ease, font-size 0.3s ease, color 0.3s ease;
+}
+
+.form__row {
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: space-between;*/
+}
+
+.form__row > legend{
+    font-size: 1.2rem;
+}
+
+.form__row div {
+    margin: 0;
 }

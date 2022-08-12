@@ -1,5 +1,10 @@
 import {EventEmitter} from "./EventEmitter.js";
-import {ControlOptionRange, ControlOptionNumberColor, ControlOptionSelect} from "./ControlOptions.js";
+import {
+  ControlOptionRange,
+  ControlOptionNumberColor,
+  ControlOptionSelect,
+  ControlOptionArray
+} from "./ControlOptions.js";
 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
@@ -136,7 +141,7 @@ class ComponentConfigurator extends EventEmitter {
 
   createPropControl(controlOption) {
     const newControl = createControl(controlOption);
-    newControl.on('optionChanged', this)
+    newControl.on('optionChanged', this);
     return newControl.container;
   }
 }
@@ -145,7 +150,8 @@ const options = {
   'number': ControlOptionNumberColor,
   'color': ControlOptionNumberColor,
   'range': ControlOptionRange,
-  'select': ControlOptionSelect
+  'select': ControlOptionSelect,
+  'array': ControlOptionArray,
 }
 
 function createControl(controlOption) {

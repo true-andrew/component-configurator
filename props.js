@@ -38,8 +38,9 @@ export const props1 = [
   },
   {
     "title": "padding",
-    "value": 25,
-    "type": "number",
+    "value": [25, 34, 25, 25],
+    "type": "array",
+    "mode": "advanced",
     "category": "Visual"
   },
   {

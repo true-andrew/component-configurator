@@ -13,16 +13,27 @@ export class ControlOption extends EventEmitter {
   }
 
   handleEvent(ev) {
+    let optionName = ev.target.id;
+    let optionValue = ev.value;
+    if (this.type === 'array') {
+      for (let i = 1, len = this.container.children.length; i < len; i++) {
+        const formGroup = this.container.children[i];
+        const input = formGroup.firstChild;
+        this.value[i - 1] = input.value;
+      }
+      optionName = this.title;
+      optionValue = this.value;
+    }
     this.emit('optionChanged', {
       type: 'optionChanged',
-      optionName: this.title,
-      optionValue: ev.target.value,
+      optionName,
+      optionValue,
     })
   }
 
-  create() {
+  create(title) {
     const propContainer = this.createContainer();
-    const titleElement = this.createLabel();
+    const titleElement = this.createLabel(title);
     propContainer.append(titleElement);
     return propContainer;
   }
@@ -33,11 +44,11 @@ export class ControlOption extends EventEmitter {
     return propContainer;
   }
 
-  createLabel() {
+  createLabel(title) {
     const labelElement = document.createElement('label');
     labelElement.classList.add('form__label');
-    labelElement.htmlFor = this.title;
-    labelElement.textContent = this.title;
+    labelElement.htmlFor = title;
+    labelElement.textContent = title;
     return labelElement;
   }
 
@@ -53,19 +64,19 @@ export class ControlOptionInput extends ControlOption {
     super(controlOption);
   }
 
-  create() {
-    const controlElement = super.create();
-    const inputElement = this.createInput();
+  create(title, type, value) {
+    const controlElement = super.create(title);
+    const inputElement = this.createInput(title, type, value);
     controlElement.prepend(inputElement);
     return controlElement;
   }
 
-  createInput() {
+  createInput(title, type) {
     const inputElement = document.createElement('input');
     inputElement.classList.add('form__field');
-    inputElement.id = this.title;
+    inputElement.id = title;
     inputElement.required = true;
-    inputElement.type = this.type;
+    inputElement.type = type;
     super.initEventListener(inputElement)
     return inputElement;
   }
@@ -79,11 +90,11 @@ export class ControlOptionRange extends ControlOptionInput {
     super(controlOption);
     this.max = controlOption.max;
     this.min = controlOption.min;
-    this.container = super.create();
+    this.container = super.create(this.title);
   }
 
   createInput() {
-    const input = super.createInput();
+    const input = super.createInput(this.title, this.type);
     input.max = this.max;
     input.min = this.min;
     input.value = this.value;
@@ -94,12 +105,12 @@ export class ControlOptionRange extends ControlOptionInput {
 export class ControlOptionNumberColor extends ControlOptionInput {
   constructor(controlOption) {
     super(controlOption);
-    this.container = super.create();
+    this.container = super.create(this.title, this.type, this.value);
   }
 
-  createInput() {
-    const input = super.createInput();
-    input.value = this.value;
+  createInput(title, type, value) {
+    const input = super.createInput(title, type);
+    input.value = value;
     return input;
   }
 }
@@ -115,7 +126,7 @@ export class ControlOptionSelect extends ControlOption {
   }
 
   create() {
-    const createdContainer = super.create();
+    const createdContainer = super.create(this.title);
     const selectElement = this.createSelect();
     createdContainer.prepend(selectElement);
     return createdContainer;
@@ -137,5 +148,36 @@ export class ControlOptionSelect extends ControlOption {
     selectElement.append(...optionElements);
     super.initEventListener(selectElement);
     return selectElement;
+  }
+}
+
+export class ControlOptionArray extends ControlOptionNumberColor {
+  sides = ['Top', 'Right', 'Bottom', 'Left'];
+
+  constructor(controlOption) {
+    super(controlOption);
+    this.container = this.createCustomContainer();
+
+    const inputProps = []
+    for (let i = 0, len = this.value.length; i < len; i++) {
+      const newTitle = this.title + this.sides[i];
+      const container = super.create(newTitle, 'number', this.value[i]);
+      inputProps.push(container);
+    }
+    this.container.append(...inputProps);
+
+  }
+
+  createCustomContainer() {
+    const custom = document.createElement('fieldset');
+    custom.classList.add('form__row');
+    const legend = document.createElement('legend');
+    legend.textContent = this.title;
+    custom.append(legend);
+    // const checkbox = document.createElement('input');
+    // checkbox.type = 'checkbox';
+    // custom.append(checkbox);
+
+    return custom;
   }
 }

@@ -18,7 +18,10 @@ export class CustomComponent extends EventEmitter{
 
     for (let i = 0, len = props.length; i < len; i++) {
       const prop = props[i];
-      const value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
+      let value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
+      if (prop.type === 'array') {
+        value = prop.value.map((el) => el + 'px').join(' ');
+      }
       if (this.container.style[prop.title] !== value) {
         this.container.style[prop.title] = value;
       }
@@ -34,7 +37,6 @@ export class CustomComponent extends EventEmitter{
         prop.value = value;
       }
     }
-
     window.localStorage.setItem(this.componentName, JSON.stringify(props));
     this.renderComponent();
   }
