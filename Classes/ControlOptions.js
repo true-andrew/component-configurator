@@ -13,13 +13,18 @@ export class ControlOption extends EventEmitter {
   }
 
   handleEvent(ev) {
-    let optionName = ev.target.id;
-    let optionValue = ev.value;
+    let optionName = this.title;
+    let optionValue = ev.target.value;
     if (this.type === 'array') {
-      for (let i = 1, len = this.container.children.length; i < len; i++) {
-        const formGroup = this.container.children[i];
-        const input = formGroup.firstChild;
-        this.value[i - 1] = input.value;
+      if (this.mode === 'simple') {
+        this.value.fill(ev.target.value);
+      } else {
+        const formContainer = this.container.lastChild;
+        for (let i = 0, len = formContainer.children.length; i < len; i++) {
+          const formGroup = this.container.lastChild.children[i];
+          const input = formGroup.firstChild;
+          this.value[i] = input.value;
+        }
       }
       optionName = this.title;
       optionValue = this.value;
@@ -153,19 +158,33 @@ export class ControlOptionSelect extends ControlOption {
 
 export class ControlOptionArray extends ControlOptionNumberColor {
   sides = ['Top', 'Right', 'Bottom', 'Left'];
+  mode = undefined;
+  propsContainer = undefined;
 
   constructor(controlOption) {
     super(controlOption);
+    this.mode = controlOption.mode;
     this.container = this.createCustomContainer();
+    this.render();
+  }
 
-    const inputProps = []
-    for (let i = 0, len = this.value.length; i < len; i++) {
-      const newTitle = this.title + this.sides[i];
-      const container = super.create(newTitle, 'number', this.value[i]);
-      inputProps.push(container);
+  render() {
+    this.propsContainer.textContent = '';
+    if (this.mode === 'advanced') {
+      const inputProps = []
+      for (let i = 0, len = this.value.length; i < len; i++) {
+        const newTitle = this.sides[i];
+        const container = super.create(newTitle, 'number', this.value[i]);
+        inputProps.push(container);
+      }
+      this.propsContainer.append(...inputProps);
+    } else if (this.mode === 'simple') {
+      const simpleContainer = super.create('', 'number', this.value[0]);
+      simpleContainer.style.padding = '0';
+      this.propsContainer.append(simpleContainer);
     }
-    this.container.append(...inputProps);
 
+    this.container.append(this.propsContainer);
   }
 
   createCustomContainer() {
@@ -173,10 +192,14 @@ export class ControlOptionArray extends ControlOptionNumberColor {
     custom.classList.add('form__row');
     const legend = document.createElement('legend');
     legend.textContent = this.title;
+    legend.addEventListener('click', () => {
+      this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
+      this.render();
+    })
     custom.append(legend);
-    // const checkbox = document.createElement('input');
-    // checkbox.type = 'checkbox';
-    // custom.append(checkbox);
+    this.checkbox = document.createElement('input');
+    this.checkbox.type = 'checkbox';
+    this.propsContainer = document.createElement('div');
 
     return custom;
   }

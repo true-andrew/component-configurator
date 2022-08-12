@@ -10,4 +10,4 @@ const component2 = new CustomComponent('component2');
 configurator.register(component1);
 configurator.register(component2);
 
-component2.loadProperties(props1);
+// component2.loadProperties(props1);

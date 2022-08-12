@@ -45,8 +45,9 @@ export const props1 = [
   },
   {
     "title": "margin",
-    "value": 5,
-    "type": "number",
+    "value": [5, 10, 15, 20],
+    "type": "array",
+    "mode": "simple",
     "category": "Visual"
   },
   {
