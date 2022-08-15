@@ -19,8 +19,8 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   handleEvent(e) {
-    if (e.type === 'optionChanged') {
-      this.editingComponent.updateProperty(e.optionName, e.optionValue);
+    if (e.eventName === 'optionChanged') {
+      this.editingComponent.updateProperty(e);
     } else if (e.type === 'click') {
       this.handleEvent_click(e);
     }
