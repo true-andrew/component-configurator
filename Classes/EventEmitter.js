@@ -23,15 +23,15 @@ export class EventEmitter {
     this.events[eventName] = newCallbacks;
   }
 
-  emit(data) {
-    const event = this.events[data.eventName];
+  emit(e) {
+    const event = this.events[e.type];
     if (event) {
       for (let i = 0, len = event.length; i < len; i++) {
         const object = event[i];
-        object.handleEvent(data);
+        object.handleEvent(e);
       }
     } else {
-      throw new Error('Unknown event: ' + data.eventName);
+      throw new Error('Unknown event: ' + e.type);
     }
   }
 }

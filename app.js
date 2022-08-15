@@ -15,4 +15,3 @@ component2.renderComponent();
 
 configurator.register(component1);
 configurator.register(component2);
-

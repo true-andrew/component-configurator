@@ -1,10 +1,5 @@
 import {EventEmitter} from "./EventEmitter.js";
-import {
-  ControlOptionRange,
-  ControlOptionSelect,
-  ControlOptionArray,
-  ControlOptionInput
-} from "./ControlOptions.js";
+import {ControlOptionSelect, ControlOptionArray, ControlOptionInput} from "./ControlOptions.js";
 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
@@ -15,11 +10,11 @@ class ComponentConfigurator extends EventEmitter {
     super();
     this.container = this.initContainer();
     document.body.append(this.container);
-    this.chooseComponent();
+    this.initChooseComponentListener();
   }
 
   handleEvent(e) {
-    if (e.eventName === 'optionChanged') {
+    if (e.type === 'optionChanged') {
       this.editingComponent.updateProperty(e);
     } else if (e.type === 'click') {
       this.handleEvent_click(e);
@@ -28,19 +23,23 @@ class ComponentConfigurator extends EventEmitter {
 
   handleEvent_click(ev) {
     const action = ev.target.dataset.action;
-    if (this[action] !== undefined) {
-      this[action](ev);
-    } else if (action === undefined) {
-      if (!ev.composedPath().includes(this.container)) {
+
+    if (action !== undefined) {
+      if (this[action] !== undefined) {
+        this[action](ev);
+      } else {
+        throw new Error(`There is no such action: ${action}`);
+      }
+    } else {
+      const clickTarget = ev.composedPath();
+      if (!clickTarget.includes(this.container)) {
         for (let i = 0, len = this.components.length; i < len; i++) {
           const component = this.components[i];
-          if (ev.composedPath().includes(component.container)) {
+          if (clickTarget.includes(component.container)) {
             this.editComponent(component);
           }
         }
       }
-    } else {
-      throw new Error(`There is no such action: ${action}`);
     }
   }
 
@@ -54,7 +53,7 @@ class ComponentConfigurator extends EventEmitter {
     return element;
   }
 
-  chooseComponent() {
+  initChooseComponentListener() {
     document.body.addEventListener('click', this);
   }
 
@@ -112,7 +111,7 @@ class ComponentConfigurator extends EventEmitter {
         formFields[element.category] = [];
       }
       const propertyControl = this.createPropControl(element);
-      formFields[element.category].push(propertyControl);
+      formFields[element.category].push(propertyControl.container);
     }
 
     return formFields;
@@ -142,14 +141,14 @@ class ComponentConfigurator extends EventEmitter {
   createPropControl(controlOption) {
     const newControl = createControl(controlOption);
     newControl.on('optionChanged', this);
-    return newControl.container;
+    return newControl;
   }
 }
 
 const options = {
   'number': ControlOptionInput,
   'color': ControlOptionInput,
-  'range': ControlOptionRange,
+  'range': ControlOptionInput,
   'select': ControlOptionSelect,
   'array': ControlOptionArray,
 }

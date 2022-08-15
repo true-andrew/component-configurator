@@ -178,3 +178,7 @@ fieldset {
     width: 50%;
     justify-self: center;
 }
+
+.simple_input {
+    padding: 0;
+}
