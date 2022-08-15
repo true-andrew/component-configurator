@@ -38,6 +38,7 @@ export class CustomComponent {
           prop.mode = propMode;
         }
         prop.value = propValue;
+        break;
       }
     }
     window.localStorage.setItem(this.componentName, JSON.stringify(props));
