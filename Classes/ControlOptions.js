@@ -29,8 +29,8 @@ export class ControlOption extends EventEmitter {
       optionName = this.title;
       optionValue = this.value;
     }
-    this.emit('optionChanged', {
-      type: 'optionChanged',
+    this.emit({
+      eventName: 'optionChanged',
       optionName,
       optionValue,
     })
@@ -157,17 +157,18 @@ export class ControlOptionArray extends ControlOptionInput {
     this.render();
   }
 
-  handleEvent(ev) {
-    if (ev.type === 'change') {
-      super.handleEvent(ev);
-    } else if (ev.type === 'click') {
+  handleEvent(e) {
+    if (e.type === 'change') {
+      super.handleEvent(e);
+    } else if (e.type === 'click') {
       this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
       this.value = this.value.fill(this.value[0]);
-      this.emit('optionChanged', {
-        type: 'optionChanged',
+      this.emit({
+        eventName: 'optionChanged',
         optionName: this.title,
-        optionValue: this.value
-      })
+        optionValue: this.value,
+        optionMode: this.mode,
+      });
       this.render();
     }
   }
