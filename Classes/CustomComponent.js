@@ -24,13 +24,20 @@ export class CustomComponent {
     }
   }
 
-  updateProperty(propName, value) {
+  updateProperty(data) {
     const props = JSON.parse(window.localStorage.getItem(this.componentName));
+
+    const propName = data.optionName;
+    const propValue = data.optionValue;
+    const propMode = data.optionMode;
 
     for (let i = 0, len = props.length; i < len; i++) {
       const prop = props[i];
       if (prop.title === propName) {
-        prop.value = value;
+        if (propMode !== undefined) {
+          prop.mode = propMode;
+        }
+        prop.value = propValue;
       }
     }
     window.localStorage.setItem(this.componentName, JSON.stringify(props));
