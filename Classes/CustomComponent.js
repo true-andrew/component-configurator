@@ -18,8 +18,8 @@ export class CustomComponent {
       if (prop.type === 'array') {
         value = prop.value.map((el) => el + 'px').join(' ');
       }
-      if (this.container.style[prop.title] !== value) {
-        this.container.style[prop.title] = value;
+      if (this.container.style[prop.name] !== value) {
+        this.container.style[prop.name] = value;
       }
     }
   }
@@ -33,7 +33,7 @@ export class CustomComponent {
 
     for (let i = 0, len = props.length; i < len; i++) {
       const prop = props[i];
-      if (prop.title === propName) {
+      if (prop.name === propName) {
         if (propMode !== undefined) {
           prop.mode = propMode;
         }

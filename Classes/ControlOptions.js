@@ -3,18 +3,18 @@ import {EventEmitter} from "./EventEmitter.js";
 export class ControlOption extends EventEmitter {
   type = undefined;
   value = undefined;
-  title = undefined;
+  name = undefined;
   container = undefined;
 
   constructor(controlOption) {
     super();
     this.type = controlOption.type;
     this.value = controlOption.value;
-    this.title = controlOption.title;
+    this.name = controlOption.name;
   }
 
   handleEvent(ev) {
-    const optionName = this.title;
+    const optionName = this.name;
     const optionValue = ev.target.value;
     this.emit({
       type: 'optionChanged',
@@ -23,7 +23,7 @@ export class ControlOption extends EventEmitter {
     })
   }
 
-  createPropContainer(title) {
+  createPropContainerWithTitle(title) {
     const propContainer = document.createElement('div');
     propContainer.classList.add('form__group');
     const labelElement = document.createElement('label');
@@ -49,22 +49,22 @@ export class ControlOptionInput extends ControlOption {
       this.min = controlOption.min;
       this.max = controlOption.max;
     }
-    this.container = this.createControlOptionInput(this.title, this.type, this.value);
+    this.container = this.createControlOptionInput(controlOption.title, this.type, this.value);
   }
 
   createControlOptionInput(title, type, value) {
-    const controlElement = super.createPropContainer(title);
-    const inputElement = this.createInputElement(title, type, value);
+    const controlElement = super.createPropContainerWithTitle(title);
+    const inputElement = this.createInputElement(type, value);
     controlElement.prepend(inputElement);
     return controlElement;
   }
 
-  createInputElement(title, type, value) {
+  createInputElement(type, value) {
     const inputElement = document.createElement('input');
     inputElement.max = this.max;
     inputElement.min = this.min;
     inputElement.classList.add('form__field');
-    inputElement.id = title;
+    inputElement.id = this.name;
     inputElement.required = true;
     inputElement.type = type;
     inputElement.value = value;
@@ -79,11 +79,11 @@ export class ControlOptionSelect extends ControlOption {
   constructor(controlOption) {
     super(controlOption);
     this.options = controlOption.options;
-    this.container = this.createControlOptionSelect();
+    this.container = this.createControlOptionSelect(controlOption.title);
   }
 
-  createControlOptionSelect() {
-    const createdContainer = super.createPropContainer(this.title);
+  createControlOptionSelect(title) {
+    const createdContainer = super.createPropContainerWithTitle(title);
     const selectElement = this.createSelectElement();
     createdContainer.prepend(selectElement);
     return createdContainer;
@@ -116,7 +116,7 @@ export class ControlOptionArray extends ControlOptionInput {
   constructor(controlOption) {
     super(controlOption);
     this.mode = controlOption.mode;
-    this.container = this.createControlOptionArray();
+    this.container = this.createControlOptionArray(controlOption.title);
     this.render();
   }
 
@@ -140,7 +140,7 @@ export class ControlOptionArray extends ControlOptionInput {
 
     this.emit({
       type: 'optionChanged',
-      optionName: this.title,
+      optionName: this.name,
       optionValue: this.value,
       optionMode: this.mode,
     });
@@ -172,11 +172,11 @@ export class ControlOptionArray extends ControlOptionInput {
     this.container.append(this.propsContainer);
   }
 
-  createControlOptionArray() {
+  createControlOptionArray(title) {
     const container = document.createElement('fieldset');
     container.classList.add('form__row');
     const legend = document.createElement('legend');
-    legend.textContent = this.title;
+    legend.textContent = title;
     legend.addEventListener('click', this);
     container.append(legend);
     this.propsContainer = document.createElement('div');
