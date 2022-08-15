@@ -5,7 +5,6 @@ export class CustomComponent {
   constructor(name) {
     this.componentName = name;
     this.container = document.createElement('div');
-    this.renderComponent();
     document.body.append(this.container);
   }
 
