@@ -23,25 +23,15 @@ export class ControlOption extends EventEmitter {
     })
   }
 
-  create(title) {
-    const propContainer = this.createContainer();
-    const titleElement = this.createLabel(title);
-    propContainer.append(titleElement);
-    return propContainer;
-  }
-
-  createContainer() {
+  createPropContainer(title) {
     const propContainer = document.createElement('div');
     propContainer.classList.add('form__group');
-    return propContainer;
-  }
-
-  createLabel(title) {
     const labelElement = document.createElement('label');
     labelElement.classList.add('form__label');
     labelElement.htmlFor = title;
     labelElement.textContent = title;
-    return labelElement;
+    propContainer.append(labelElement);
+    return propContainer;
   }
 
   initEventListener(element) {
@@ -63,7 +53,7 @@ export class ControlOptionInput extends ControlOption {
   }
 
   createControlOptionInput(title, type, value) {
-    const controlElement = super.create(title);
+    const controlElement = super.createPropContainer(title);
     const inputElement = this.createInputElement(title, type, value);
     controlElement.prepend(inputElement);
     return controlElement;
@@ -93,7 +83,7 @@ export class ControlOptionSelect extends ControlOption {
   }
 
   createControlOptionSelect() {
-    const createdContainer = super.create(this.title);
+    const createdContainer = super.createPropContainer(this.title);
     const selectElement = this.createSelectElement();
     createdContainer.prepend(selectElement);
     return createdContainer;
