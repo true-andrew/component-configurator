@@ -1,11 +1,8 @@
-import {EventEmitter} from "./EventEmitter.js";
-
-export class CustomComponent extends EventEmitter{
+export class CustomComponent {
   componentName = undefined;
   container = undefined;
 
   constructor(name) {
-    super();
     this.componentName = name;
     this.container = document.createElement('div');
     this.renderComponent();

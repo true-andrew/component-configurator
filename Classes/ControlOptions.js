@@ -84,7 +84,7 @@ export class ControlOptionInput extends ControlOption {
     inputElement.required = true;
     inputElement.type = type;
     inputElement.value = value;
-    super.initEventListener(inputElement)
+    super.initEventListener(inputElement);
     return inputElement;
   }
 }
@@ -157,6 +157,14 @@ export class ControlOptionArray extends ControlOptionInput {
     this.render();
   }
 
+  handleEvent(ev) {
+    this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
+    this.emit('optionChanged', {
+
+    })
+    this.render();
+  }
+
   render() {
     this.propsContainer.textContent = '';
     if (this.mode === 'advanced') {
@@ -181,10 +189,7 @@ export class ControlOptionArray extends ControlOptionInput {
     custom.classList.add('form__row');
     const legend = document.createElement('legend');
     legend.textContent = this.title;
-    legend.addEventListener('click', () => {
-      this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
-      this.render();
-    })
+    legend.addEventListener('click', this)
     custom.append(legend);
     this.checkbox = document.createElement('input');
     this.checkbox.type = 'checkbox';
