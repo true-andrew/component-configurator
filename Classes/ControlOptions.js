@@ -20,7 +20,7 @@ export class ControlOption extends EventEmitter {
       type: 'optionChanged',
       optionName,
       optionValue,
-    })
+    });
   }
 
   createPropContainerWithTitle(title) {
@@ -136,6 +136,8 @@ export class ControlOptionArray extends ControlOptionInput {
       this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
       this.value = this.value.fill(this.value[0]);
       this.render();
+    } else {
+      throw new Error(`Unknown event type: ${e.type}`);
     }
 
     this.emit({
