@@ -1,5 +1,5 @@
 import {EventEmitter} from "./EventEmitter.js";
-import {ControlOptionSelect, ControlOptionArray, ControlOptionInput} from "./ControlOptions.js";
+import {ControlOptionSelect, ControlOptionArray, ControlOptionInput, ControlOptionText} from "./ControlOptions.js";
 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
@@ -26,6 +26,7 @@ class ComponentConfigurator extends EventEmitter {
     if (action !== undefined) {
       if (this[action] !== undefined) {
         this[action](ev);
+        ev.stopImmediatePropagation();
       } else {
         throw new Error(`There is no such action: ${action}`);
       }
@@ -36,6 +37,7 @@ class ComponentConfigurator extends EventEmitter {
           const component = this.components[i];
           if (clickTarget.includes(component.container)) {
             this.setEditingComponent(component);
+            return;
           }
         }
       }
@@ -58,6 +60,20 @@ class ComponentConfigurator extends EventEmitter {
   hide() {
     this.container.style.visibility = 'hidden';
     this.container.style.opacity = '0';
+  }
+
+  changeTab(e) {
+    if (e.target.classList.contains('form_tab_title-active')) {
+      return;
+    }
+    const prevActiveTitle = document.getElementsByClassName('form__tab_title-active')[0];
+    prevActiveTitle.classList.remove('form__tab_title-active');
+    const prevTab = document.getElementById(prevActiveTitle.dataset.tab);
+    prevTab.classList.remove('form__tab_active');
+
+    e.target.classList.add('form__tab_title-active');
+    const curTab = document.getElementById(e.target.dataset.tab);
+    curTab.classList.add('form__tab_active');
   }
 
   makeCloseBtn() {
@@ -119,25 +135,46 @@ class ComponentConfigurator extends EventEmitter {
     form.classList.add('form');
 
     const iterableCategories = Object.keys(categories);
+    const tabs = document.createElement('fieldset');
+    tabs.classList.add('tabs');
 
     for (let i = 0, len = iterableCategories.length; i < len; i++) {
-      const key = iterableCategories[i];
-      const category = this.createCategory(key);
-      for (let j = 0, len = categories[key].length; j < len; j++) {
-        const propContainer = categories[key][j].container;
+      const name = iterableCategories[i];
+      const category = this.createCategory(name);
+      const tabTitle = this.createTab(name);
+      tabTitle.dataset.action = 'changeTab';
+      tabTitle.dataset.tab = `tab-${i}`;
+      category.id = `tab-${i}`;
+
+      if (i === 0) {
+        category.classList.add('form__tab_active');
+        tabTitle.classList.add('form__tab_title-active');
+      }
+
+      tabTitle.addEventListener('click', this);
+      tabs.append(tabTitle);
+
+      for (let j = 0, len = categories[name].length; j < len; j++) {
+        const propContainer = categories[name][j].container;
         category.append(propContainer);
       }
       form.append(category);
     }
 
+    form.prepend(tabs);
+
     return form;
   }
 
-  createCategory(name) {
+  createTab(name) {
+    const h4 = document.createElement('h4');
+    h4.textContent = name;
+    return h4;
+  }
+
+  createCategory() {
     const fieldset = document.createElement('fieldset');
-    const legend = document.createElement('legend');
-    legend.textContent = name;
-    fieldset.append(legend);
+    fieldset.classList.add('form__tab');
     return fieldset;
   }
 }
@@ -148,6 +185,7 @@ const options = {
   'range': ControlOptionInput,
   'select': ControlOptionSelect,
   'array': ControlOptionArray,
+  'text': ControlOptionText,
 }
 
 function createControl(controlOption) {

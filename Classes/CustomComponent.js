@@ -30,17 +30,25 @@ export class CustomComponent {
 
     for (let i = 0, len = this.props.length; i < len; i++) {
       const prop = this.props[i];
-      let value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
+      if (prop.category === 'Visual') {
+        let value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
 
-      if (this.container.style[prop.name] !== value) {
-        if (prop.type === 'array') {
-          value = '';
-          for (let j = 0, len = prop.value.length; j < len; j++) {
-            value += prop.value[j] + 'px ';
+        if (this.container.style[prop.name] !== value) {
+          if (prop.type === 'array') {
+            value = '';
+            for (let j = 0, len = prop.value.length; j < len; j++) {
+              value += prop.value[j] + 'px ';
+            }
           }
-        }
 
-        this.container.style[prop.name] = value;
+          this.container.style[prop.name] = value;
+        }
+      } else if (prop.category === 'Behavior') {
+        if (prop.attribute) {
+          this.container.setAttribute(prop.name, prop.value);
+        } else {
+          this.container[prop.name] = prop.value;
+        }
       }
     }
   }

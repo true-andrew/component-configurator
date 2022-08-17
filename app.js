@@ -5,7 +5,7 @@ import {props1, props2} from "./props.js";
 const configurator = new ComponentConfigurator('configurator');
 
 const component1 = new CustomComponent('component1', props1);
-const component2 = new CustomComponent('component2', props2);
+const component2 = new CustomComponent('test-btn', props2);
 
 configurator.register(component1);
 configurator.register(component2);

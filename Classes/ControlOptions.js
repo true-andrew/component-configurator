@@ -182,3 +182,11 @@ export class ControlOptionArray extends ControlOptionInput {
     return container;
   }
 }
+
+export class ControlOptionText extends ControlOptionInput {
+  constructor(controlOption) {
+    super(controlOption);
+    this.container = this.createControlOptionInput(controlOption.title, this.type, this.value);
+  }
+
+}
