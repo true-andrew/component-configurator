@@ -1,31 +1,52 @@
 export class CustomComponent {
   componentName = undefined;
   container = undefined;
+  props = undefined;
 
-  constructor(name) {
-    this.componentName = name;
-    this.container = document.createElement('div');
-    document.body.append(this.container);
+  constructor(id, props) {
+    this.componentName = id;
+    this.container = document.getElementById(id);
+    this.init(props);
+  }
+
+  init(props) {
+    if (props === undefined) {
+      return;
+    }
+    this.loadProperties(props);
+    this.renderComponent();
+  }
+
+  loadProperties(props) {
+    this.props = props;
+  }
+
+  get properties() {
+    return this.props;
   }
 
   renderComponent() {
-    const props = JSON.parse(window.localStorage.getItem(this.componentName));
     const propsWithoutPx = ['color', 'select'];
 
-    for (let i = 0, len = props.length; i < len; i++) {
-      const prop = props[i];
+    for (let i = 0, len = this.props.length; i < len; i++) {
+      const prop = this.props[i];
       let value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
-      if (prop.type === 'array') {
-        value = prop.value.map((el) => el + 'px').join(' ');
-      }
+
       if (this.container.style[prop.name] !== value) {
+        if (prop.type === 'array') {
+          value = '';
+          for (let j = 0, len = prop.value.length; j < len; j++) {
+            value += prop.value[j] + 'px ';
+          }
+        }
+
         this.container.style[prop.name] = value;
       }
     }
   }
 
   updateProperty(data) {
-    const props = JSON.parse(window.localStorage.getItem(this.componentName));
+    const props = this.props;
 
     const propName = data.optionName;
     const propValue = data.optionValue;
@@ -41,12 +62,7 @@ export class CustomComponent {
         break;
       }
     }
-    window.localStorage.setItem(this.componentName, JSON.stringify(props));
+    this.props = props;
     this.renderComponent();
-  }
-
-  loadProperties(props) {
-    const storage = window.localStorage;
-    storage.setItem(this.componentName, JSON.stringify(props));
   }
 }
