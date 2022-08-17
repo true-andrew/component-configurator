@@ -16,8 +16,7 @@ export class ControlOption extends EventEmitter {
   handleEvent(ev) {
     const optionName = this.name;
     const optionValue = ev.target.value;
-    this.emit({
-      type: 'optionChanged',
+    this.emit('optionChanged', {
       optionName,
       optionValue,
     });
@@ -92,7 +91,7 @@ export class ControlOptionSelect extends ControlOption {
   createSelectElement() {
     const selectElement = document.createElement('select');
     selectElement.classList.add('form__field');
-    const optionElements = [];
+
     for (let i = 0, len = this.options.length; i < len; i++) {
       const optionEl = document.createElement('option');
       const optionName = this.options[i];
@@ -100,9 +99,9 @@ export class ControlOptionSelect extends ControlOption {
       if (optionName === this.value) {
         optionEl.selected = true;
       }
-      optionElements.push(optionEl);
+      selectElement.append(optionEl);
     }
-    selectElement.append(...optionElements);
+
     super.initEventListener(selectElement);
     return selectElement;
   }
@@ -140,8 +139,7 @@ export class ControlOptionArray extends ControlOptionInput {
       throw new Error(`Unknown event type: ${e.type}`);
     }
 
-    this.emit({
-      type: 'optionChanged',
+    this.emit('optionChanged', {
       optionName: this.name,
       optionValue: this.value,
       optionMode: this.mode,
@@ -152,18 +150,17 @@ export class ControlOptionArray extends ControlOptionInput {
     this.propsContainer.textContent = '';
     if (this.mode === 'advanced') {
       this.propsContainer.classList.add('advanced_container');
-      const inputProps = [];
 
       for (let i = 0, len = this.value.length; i < len; i++) {
         const container = super.createControlOptionInput('', 'number', this.value[i]);
         const className = 'advanced_input' + this.sides[i];
         container.classList.add(className);
-        inputProps.push(container);
+        this.propsContainer.append(container);
       }
 
       const rectangle = document.createElement('div');
       rectangle.classList.add('advanced_figure');
-      this.propsContainer.append(...inputProps, rectangle);
+      this.propsContainer.append(rectangle);
     } else if (this.mode === 'simple') {
       this.propsContainer.classList.remove('advanced_container');
       const simpleContainer = super.createControlOptionInput('', 'number', this.value[0]);
