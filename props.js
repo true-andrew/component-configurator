@@ -68,25 +68,28 @@ export const props1 = [
 
 export const props2 = [
   {
+    "name": "width",
+    "title": "Width",
+    "value": 500,
+    "type": "number",
+    "category": "Visual"
+  },{
+    "name": "height",
+    "title": "Height",
+    "value": 300,
+    "type": "number",
+    "category": "Visual"
+  },
+  {
     "name": "borderRadius",
+    "title": "Border Radius",
     "value": 25,
-    "type": "number",
-    "category": "Visual"
-  },
-  {
-    "name": "padding",
-    "value": 25,
-    "type": "number",
-    "category": "Visual"
-  },
-  {
-    "name": "margin",
-    "value": 5,
     "type": "number",
     "category": "Visual"
   },
   {
     "name": "backgroundColor",
+    "title": "Background Color",
     "value": '#0000FF',
     "type": "color",
     "category": "Visual"
