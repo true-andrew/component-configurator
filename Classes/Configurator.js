@@ -6,16 +6,15 @@ class ComponentConfigurator extends EventEmitter {
   container = undefined;
   components = [];
 
-  constructor() {
+  constructor(id) {
     super();
-    this.container = this.initContainer();
-    document.body.append(this.container);
+    this.container = document.getElementById(id);
     this.initChooseComponentListener();
   }
 
-  handleEvent(e) {
-    if (e.type === 'optionChanged') {
-      this.editingComponent.updateProperty(e);
+  handleEvent(e, data) {
+    if (e === 'optionChanged') {
+      this.editingComponent.updateProperty(data);
     } else if (e.type === 'click') {
       this.handleEvent_click(e);
     }
@@ -36,7 +35,7 @@ class ComponentConfigurator extends EventEmitter {
         for (let i = 0, len = this.components.length; i < len; i++) {
           const component = this.components[i];
           if (clickTarget.includes(component.container)) {
-            this.editComponent(component);
+            this.setEditingComponent(component);
           }
         }
       }
@@ -45,12 +44,6 @@ class ComponentConfigurator extends EventEmitter {
 
   register(component) {
     this.components.push(component);
-  }
-
-  initContainer() {
-    const element = document.createElement('div');
-    element.id = 'configurator';
-    return element;
   }
 
   initChooseComponentListener() {
@@ -89,41 +82,51 @@ class ComponentConfigurator extends EventEmitter {
     this.show();
   }
 
-  editComponent(component) {
+  setEditingComponent(component) {
     if (this.editingComponent === component) {
       this.show();
       return;
     }
     this.editingComponent = component;
-    const formFields = this.findFormFields(component);
-    const form = this.createForm(formFields);
+    const categories = this.findPropCategories(component.properties);
+    const form = this.createForm(categories);
     this.renderForm(form);
   }
 
-  findFormFields(component) {
-    const elementsArr = JSON.parse(window.localStorage.getItem(component.componentName));
+  findPropCategories(properties) {
+    const categories = {};
 
-    const formFields = {};
-
-    for (let i = 0, len = elementsArr.length; i < len; i++) {
-      const element = elementsArr[i];
-      if (!formFields.hasOwnProperty(element.category)) {
-        formFields[element.category] = [];
+    for (let i = 0, len = properties.length; i < len; i++) {
+      const prop = properties[i];
+      if (!categories.hasOwnProperty(prop.category)) {
+        categories[prop.category] = [];
       }
-      const propertyControl = this.createPropControl(element);
-      formFields[element.category].push(propertyControl.container);
+      const propertyControl = this.createPropControl(prop);
+      categories[prop.category].push(propertyControl);
     }
 
-    return formFields;
+    return categories;
   }
 
-  createForm(formFields) {
+  createPropControl(controlOption) {
+    const newControl = createControl(controlOption);
+    newControl.on('optionChanged', this);
+    return newControl;
+  }
+
+  createForm(categories) {
     const form = document.createElement('form');
     form.classList.add('form');
 
-    for (let field in formFields) {
-      const category = this.createCategory(field);
-      category.append(...formFields[field]);
+    const iterableCategories = Object.keys(categories);
+
+    for (let i = 0, len = iterableCategories.length; i < len; i++) {
+      const key = iterableCategories[i];
+      const category = this.createCategory(key);
+      for (let j = 0, len = categories[key].length; j < len; j++) {
+        const propContainer = categories[key][j].container;
+        category.append(propContainer);
+      }
       form.append(category);
     }
 
@@ -136,12 +139,6 @@ class ComponentConfigurator extends EventEmitter {
     legend.textContent = name;
     fieldset.append(legend);
     return fieldset;
-  }
-
-  createPropControl(controlOption) {
-    const newControl = createControl(controlOption);
-    newControl.on('optionChanged', this);
-    return newControl;
   }
 }
 
