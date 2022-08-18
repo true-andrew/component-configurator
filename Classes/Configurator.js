@@ -20,18 +20,18 @@ class ComponentConfigurator extends EventEmitter {
     }
   }
 
-  handleEvent_click(ev) {
-    const action = ev.target.dataset.action;
+  handleEvent_click(e) {
+    const action = e.target.dataset.action;
 
     if (action !== undefined) {
       if (this[action] !== undefined) {
-        this[action](ev);
-        ev.stopImmediatePropagation();
+        this[action](e);
+        e.stopImmediatePropagation();
       } else {
         throw new Error(`There is no such action: ${action}`);
       }
     } else {
-      const clickTarget = ev.composedPath();
+      const clickTarget = e.composedPath();
       if (!clickTarget.includes(this.container)) {
         for (let i = 0, len = this.components.length; i < len; i++) {
           const component = this.components[i];
@@ -42,6 +42,7 @@ class ComponentConfigurator extends EventEmitter {
         }
       }
     }
+
   }
 
   registerComponent(component) {

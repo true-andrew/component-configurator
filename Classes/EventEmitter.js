@@ -11,18 +11,6 @@ export class EventEmitter {
     }
   }
 
-  off(eventName, callback) {
-    const callbacks = this.events[eventName];
-    const newCallbacks = [];
-    for (let i = 0, len = callbacks.length; i < len; i++) {
-      const targetCallback = callbacks[i];
-      if (targetCallback !== callback) {
-        newCallbacks.push(targetCallback);
-      }
-    }
-    this.events[eventName] = newCallbacks;
-  }
-
   emit(eventName, data) {
     const event = this.events[eventName];
     if (event) {

@@ -183,13 +183,13 @@ export class ControlOptionArray extends ControlOptionInput {
   }
 }
 
-export class ControlOptionTextarea extends ControlOption{
+export class ControlOptionTextarea extends ControlOption {
   constructor(controlOption) {
     super(controlOption);
-    this.container = this.createTextArea(controlOption.title);
+    this.container = this.createControlOptionTextarea(controlOption.title);
   }
 
-  createTextArea(title) {
+  createControlOptionTextarea(title) {
     const container = super.createPropContainerWithTitle(title);
     const label = container.firstChild;
     label.classList.add('form__label-textarea');
