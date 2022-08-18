@@ -1,5 +1,6 @@
 import {EventEmitter} from "./EventEmitter.js";
-import {ControlOptionSelect, ControlOptionArray, ControlOptionInput, ControlOptionTextarea} from "./ControlOptions.js";
+import {ControlOptionArray, ControlOptionInput, ControlOptionSelect, ControlOptionTextarea} from "./ControlOptions.js";
+import {createDOMElement} from "../Helper Functions/helper.js";
 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
@@ -8,6 +9,10 @@ class ComponentConfigurator extends EventEmitter {
 
   constructor(id) {
     super();
+    this.init(id)
+  }
+
+  init(id) {
     this.container = document.getElementById(id);
     this.initChooseComponentListener();
   }
@@ -21,34 +26,32 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   handleEvent_click(e) {
-    const action = e.target.dataset.action;
-
-    if (action !== undefined) {
-      if (this[action] !== undefined) {
-        this[action](e);
-        e.stopImmediatePropagation();
-      } else {
-        throw new Error(`There is no such action: ${action}`);
+    const clickTarget = e.composedPath();
+    if (!clickTarget.includes(this.container)) {
+      for (let i = 0, len = this.components.length; i < len; i++) {
+        const component = this.components[i];
+        if (clickTarget.includes(component.container)) {
+          this.setEditingComponent(component);
+          return;
+        }
       }
     } else {
-      const clickTarget = e.composedPath();
-      if (!clickTarget.includes(this.container)) {
-        for (let i = 0, len = this.components.length; i < len; i++) {
-          const component = this.components[i];
-          if (clickTarget.includes(component.container)) {
-            this.setEditingComponent(component);
-            return;
-          }
+      const action = e.target.dataset.action;
+      if (action !== undefined) {
+        if (this[action] !== undefined) {
+          this[action](e);
+          e.stopImmediatePropagation();
+        } else {
+          throw new Error(`There is no such action: ${action}`);
         }
       }
     }
-
   }
 
   registerComponent(component) {
     this.components.push(component);
   }
-
+//TODO
   initChooseComponentListener() {
     document.body.addEventListener('click', this);
   }
@@ -77,24 +80,12 @@ class ComponentConfigurator extends EventEmitter {
     curTab.classList.add('form__tab_active');
   }
 
-  makeCloseBtn() {
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = 'Close';
-    closeBtn.dataset.action = 'hide';
-    closeBtn.classList.add('close-btn');
-    closeBtn.addEventListener('click', this);
-    return closeBtn;
-  }
-
-  makeHeader() {
-    const header = document.createElement('h2');
-    header.textContent = 'Configuration';
-    return header;
-  }
-
   renderForm(form) {
-    const header = this.makeHeader();
-    const closeBtn = this.makeCloseBtn();
+    const header = createDOMElement('h2', undefined, 'Configurator');
+    const closeBtn = createDOMElement('button', 'close-btn', 'Close', {
+      'action': 'hide'
+    });
+    closeBtn.addEventListener('click', this);
     this.container.replaceChildren(header, form, closeBtn);
     this.show();
   }
@@ -132,20 +123,19 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   createForm(categories) {
-    const form = document.createElement('form');
-    form.classList.add('form');
+    const form = createDOMElement('form', 'form');
 
     const iterableCategories = Object.keys(categories);
-    const tabs = document.createElement('fieldset');
-    tabs.classList.add('tabs');
+    const tabs = createDOMElement('fieldset', 'tabs');
 
     for (let i = 0, len = iterableCategories.length; i < len; i++) {
       const name = iterableCategories[i];
-      const category = this.createCategory(name);
-      const tabTitle = this.createTab(name);
-      tabTitle.dataset.action = 'changeTab';
-      tabTitle.dataset.tab = `tab-${i}`;
-      category.id = `tab-${i}`;
+      const category = createDOMElement('fieldset', 'form__tab');
+      category.id = 'tab-' + i;
+      const tabTitle = createDOMElement('h4', 'form__tab-title', name, {
+        'action': 'changeTab',
+        'tab': 'tab-' + i,
+      });
 
       if (i === 0) {
         category.classList.add('form__tab_active');
@@ -159,24 +149,13 @@ class ComponentConfigurator extends EventEmitter {
         const propContainer = categories[name][j].container;
         category.append(propContainer);
       }
+
       form.append(category);
     }
 
     form.prepend(tabs);
 
     return form;
-  }
-
-  createTab(name) {
-    const h4 = document.createElement('h4');
-    h4.textContent = name;
-    return h4;
-  }
-
-  createCategory() {
-    const fieldset = document.createElement('fieldset');
-    fieldset.classList.add('form__tab');
-    return fieldset;
   }
 }
 

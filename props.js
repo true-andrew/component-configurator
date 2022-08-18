@@ -69,7 +69,7 @@ export const props1 = [
     "title": "Text",
     "value": "some text...",
     "type": "textarea",
-    "category": "Behavior"
+    "category": "General"
   },
 ];
 
@@ -140,7 +140,7 @@ export const props2 = [
     "title": "Text",
     "value": "Test Button",
     "type": "text",
-    "category": "Behavior"
+    "category": "General"
   },
   {
     "name": "href",
@@ -149,6 +149,14 @@ export const props2 = [
     "attribute": true,
     "type": "select",
     "options": ["#", "https://www.google.com", "https://www.yandex.ru", "https://www.duckduckgo.com"],
-    "category": "Behavior",
-  }
+    "category": "General",
+  },
+  {
+    "name": "padding",
+    "title": "Padding",
+    "value": [25, 25, 25, 25],
+    "type": "array",
+    "mode": "simple",
+    "category": "General"
+  },
 ]

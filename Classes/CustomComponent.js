@@ -41,7 +41,7 @@ export class CustomComponent {
           }
           this.container.style[prop.name] = value;
         }
-      } else if (prop.category === 'Behavior') {
+      } else if (prop.category === 'General') {
         if (prop.attribute) {
           this.container.setAttribute(prop.name, prop.value);
         } else {

@@ -1,9 +1,7 @@
 import {EventEmitter} from "./EventEmitter.js";
+import {createDOMElement} from "../Helper Functions/helper.js";
 
 export class ControlOption extends EventEmitter {
-  type = undefined;
-  value = undefined;
-  name = undefined;
   container = undefined;
 
   constructor(controlOption) {
@@ -23,12 +21,9 @@ export class ControlOption extends EventEmitter {
   }
 
   createPropContainerWithTitle(title) {
-    const propContainer = document.createElement('div');
-    propContainer.classList.add('form__group');
-    const labelElement = document.createElement('label');
-    labelElement.classList.add('form__label');
-    labelElement.htmlFor = title;
-    labelElement.textContent = title;
+    const propContainer = createDOMElement('div', 'form__group');
+    const labelElement = createDOMElement('label', 'form__label', title);
+    labelElement.htmlFor = this.name;
     propContainer.append(labelElement);
     return propContainer;
   }
@@ -39,9 +34,6 @@ export class ControlOption extends EventEmitter {
 }
 
 export class ControlOptionInput extends ControlOption {
-  max = undefined;
-  min = undefined;
-
   constructor(controlOption) {
     super(controlOption);
     if (controlOption.max !== undefined && controlOption.min !== undefined) {
@@ -73,8 +65,6 @@ export class ControlOptionInput extends ControlOption {
 }
 
 export class ControlOptionSelect extends ControlOption {
-  options = undefined;
-
   constructor(controlOption) {
     super(controlOption);
     this.options = controlOption.options;
@@ -89,19 +79,16 @@ export class ControlOptionSelect extends ControlOption {
   }
 
   createSelectElement() {
-    const selectElement = document.createElement('select');
-    selectElement.classList.add('form__field');
+    const selectElement = createDOMElement('select', 'form__field');
 
     for (let i = 0, len = this.options.length; i < len; i++) {
-      const optionEl = document.createElement('option');
       const optionName = this.options[i];
-      optionEl.textContent = optionName;
+      const optionEl = createDOMElement('option', undefined, optionName);
       if (optionName === this.value) {
         optionEl.selected = true;
       }
       selectElement.append(optionEl);
     }
-
     super.initEventListener(selectElement);
     return selectElement;
   }
@@ -109,32 +96,24 @@ export class ControlOptionSelect extends ControlOption {
 
 export class ControlOptionArray extends ControlOptionInput {
   sides = ['Top', 'Right', 'Bottom', 'Left'];
-  mode = undefined;
   propsContainer = undefined;
 
   constructor(controlOption) {
     super(controlOption);
     this.mode = controlOption.mode;
-    this.container = this.createControlOptionArray(controlOption.title);
+    this.init(controlOption.title);
+  }
+
+  init(title) {
+    this.container = this.createControlOptionArray(title);
     this.render();
   }
 
   handleEvent(e) {
     if (e.type === 'change') {
-      if (this.mode === 'simple') {
-        this.value = this.value.fill(e.target.value);
-      } else {
-        const formContainer = this.container.lastChild;
-        for (let i = 0, len = formContainer.children.length - 1; i < len; i++) {
-          const formGroup = formContainer.children[i];
-          const input = formGroup.firstChild;
-          this.value[i] = input.value;
-        }
-      }
+      this.setValue(e.target.value);
     } else if (e.type === 'click') {
-      this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
-      this.value = this.value.fill(this.value[0]);
-      this.render();
+      this.changeViewMode();
     } else {
       throw new Error(`Unknown event type: ${e.type}`);
     }
@@ -144,6 +123,25 @@ export class ControlOptionArray extends ControlOptionInput {
       optionValue: this.value,
       optionMode: this.mode,
     });
+  }
+
+  changeViewMode() {
+    this.mode = this.mode === 'simple' ? 'advanced' : 'simple';
+    this.setValue(this.value[0]);
+    this.render();
+  }
+
+  setValue(value) {
+    if (this.mode === 'simple') {
+      this.value = this.value.fill(value);
+    } else {
+      const formContainer = this.container.lastChild;
+      for (let i = 0, len = formContainer.children.length - 1; i < len; i++) {
+        const formGroup = formContainer.children[i];
+        const input = formGroup.firstChild;
+        this.value[i] = input.value;
+      }
+    }
   }
 
   render() {
@@ -158,8 +156,7 @@ export class ControlOptionArray extends ControlOptionInput {
         this.propsContainer.append(container);
       }
 
-      const rectangle = document.createElement('div');
-      rectangle.classList.add('advanced_figure');
+      const rectangle = createDOMElement('div', 'advanced_figure');
       this.propsContainer.append(rectangle);
     } else if (this.mode === 'simple') {
       this.propsContainer.classList.remove('advanced_container');
@@ -172,10 +169,8 @@ export class ControlOptionArray extends ControlOptionInput {
   }
 
   createControlOptionArray(title) {
-    const container = document.createElement('fieldset');
-    container.classList.add('form__row');
-    const legend = document.createElement('legend');
-    legend.textContent = title;
+    const container = createDOMElement('fieldset', 'form__row');
+    const legend = createDOMElement('legend', undefined, title);
     legend.addEventListener('click', this);
     container.append(legend);
     this.propsContainer = document.createElement('div');
@@ -193,8 +188,7 @@ export class ControlOptionTextarea extends ControlOption {
     const container = super.createPropContainerWithTitle(title);
     const label = container.firstChild;
     label.classList.add('form__label-textarea');
-    const textarea = document.createElement('textarea');
-    textarea.classList.add('form__textarea');
+    const textarea = createDOMElement('textarea', 'form__textarea');
     super.initEventListener(textarea);
     textarea.value = this.value;
     container.prepend(textarea);
