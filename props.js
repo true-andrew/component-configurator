@@ -52,7 +52,7 @@ export const props1 = [
   {
     "name": "margin",
     "title": "Margin",
-    "value": [5, 5, 5, 5],
+    "value": [50, 50, 50, 50],
     "type": "array",
     "mode": "simple",
     "category": "Visual"
@@ -63,7 +63,14 @@ export const props1 = [
     "value": '#00FF00',
     "type": "color",
     "category": "Visual"
-  }
+  },
+  {
+    "name": "textContent",
+    "title": "Text",
+    "value": "some text...",
+    "type": "textarea",
+    "category": "Behavior"
+  },
 ];
 
 export const props2 = [
@@ -116,7 +123,7 @@ export const props2 = [
   {
     "name": "margin",
     "title": "Margin",
-    "value": [5, 5, 5, 5],
+    "value": [0,0,0,0],
     "type": "array",
     "mode": "simple",
     "category": "Visual"

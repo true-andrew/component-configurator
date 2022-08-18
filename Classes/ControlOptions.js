@@ -183,10 +183,21 @@ export class ControlOptionArray extends ControlOptionInput {
   }
 }
 
-export class ControlOptionText extends ControlOptionInput {
+export class ControlOptionTextarea extends ControlOption{
   constructor(controlOption) {
     super(controlOption);
-    this.container = this.createControlOptionInput(controlOption.title, this.type, this.value);
+    this.container = this.createTextArea(controlOption.title);
   }
 
+  createTextArea(title) {
+    const container = super.createPropContainerWithTitle(title);
+    const label = container.firstChild;
+    label.classList.add('form__label-textarea');
+    const textarea = document.createElement('textarea');
+    textarea.classList.add('form__textarea');
+    super.initEventListener(textarea);
+    textarea.value = this.value;
+    container.prepend(textarea);
+    return container;
+  }
 }

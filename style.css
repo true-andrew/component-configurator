@@ -213,3 +213,27 @@ fieldset {
 .form__tab_active {
     display: block;
 }
+
+.form__label-textarea {
+    font-size: 1rem;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: whitesmoke;
+    /*padding: 0;*/
+}
+
+.form__textarea {
+    width: 100%;
+    resize: none;
+    height: 150px;
+    border-radius: 5px;
+    /*font-size: 1rem;*/
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: whitesmoke;
+}
+
+.form__textarea:focus + .form__label-textarea {
+    color: #11998e;
+}

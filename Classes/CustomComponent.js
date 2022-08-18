@@ -5,7 +5,6 @@ export class CustomComponent {
 
   constructor(id, props) {
     this.componentName = id;
-    this.container = document.getElementById(id);
     this.init(props);
   }
 
@@ -26,13 +25,13 @@ export class CustomComponent {
   }
 
   renderComponent() {
+    this.container = document.getElementById(this.componentName);
     const propsWithoutPx = ['color', 'select'];
 
     for (let i = 0, len = this.props.length; i < len; i++) {
       const prop = this.props[i];
       if (prop.category === 'Visual') {
         let value = propsWithoutPx.includes(prop.type) ? prop.value : prop.value + 'px';
-
         if (this.container.style[prop.name] !== value) {
           if (prop.type === 'array') {
             value = '';
@@ -40,7 +39,6 @@ export class CustomComponent {
               value += prop.value[j] + 'px ';
             }
           }
-
           this.container.style[prop.name] = value;
         }
       } else if (prop.category === 'Behavior') {

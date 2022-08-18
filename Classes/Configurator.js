@@ -1,5 +1,5 @@
 import {EventEmitter} from "./EventEmitter.js";
-import {ControlOptionSelect, ControlOptionArray, ControlOptionInput, ControlOptionText} from "./ControlOptions.js";
+import {ControlOptionSelect, ControlOptionArray, ControlOptionInput, ControlOptionTextarea} from "./ControlOptions.js";
 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
@@ -44,7 +44,7 @@ class ComponentConfigurator extends EventEmitter {
     }
   }
 
-  register(component) {
+  registerComponent(component) {
     this.components.push(component);
   }
 
@@ -185,7 +185,8 @@ const options = {
   'range': ControlOptionInput,
   'select': ControlOptionSelect,
   'array': ControlOptionArray,
-  'text': ControlOptionText,
+  'text': ControlOptionInput,
+  'textarea': ControlOptionTextarea
 }
 
 function createControl(controlOption) {
