@@ -6,6 +6,3 @@ const configurator = new ComponentConfigurator('configurator');
 
 const component1 = new CustomComponent('component1', props1);
 const component2 = new CustomComponent('test-btn', props2);
-
-configurator.registerComponent(component1);
-configurator.registerComponent(component2);

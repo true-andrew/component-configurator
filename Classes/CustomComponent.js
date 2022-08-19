@@ -1,19 +1,34 @@
-export class CustomComponent {
+import {EventEmitter} from "./EventEmitter.js";
+
+export class CustomComponent extends EventEmitter {
   componentName = undefined;
   container = undefined;
   props = undefined;
 
   constructor(id, props) {
+    super();
     this.componentName = id;
     this.init(props);
+  }
+
+  handleEvent(e) {
+    if (e.type === 'click') {
+      this.emit('chooseComponent', this);
+    }
   }
 
   init(props) {
     if (props === undefined) {
       return;
     }
+    this.getContainerAddEventListener();
     this.loadProperties(props);
     this.renderComponent();
+  }
+
+  getContainerAddEventListener() {
+    this.container = document.getElementById(this.componentName);
+    this.container.addEventListener('click', this);
   }
 
   loadProperties(props) {
@@ -25,7 +40,6 @@ export class CustomComponent {
   }
 
   renderComponent() {
-    this.container = document.getElementById(this.componentName);
     const propsWithoutPx = ['color', 'select'];
 
     for (let i = 0, len = this.props.length; i < len; i++) {

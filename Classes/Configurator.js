@@ -5,7 +5,6 @@ import {createDOMElement} from "../Helper Functions/helper.js";
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
   container = undefined;
-  components = [];
 
   constructor(id) {
     super();
@@ -14,46 +13,29 @@ class ComponentConfigurator extends EventEmitter {
 
   init(id) {
     this.container = document.getElementById(id);
-    this.initChooseComponentListener();
+    super.on('chooseComponent', this);
   }
 
   handleEvent(e, data) {
     if (e === 'optionChanged') {
       this.editingComponent.updateProperty(data);
+    } else if (e === 'chooseComponent') {
+      this.setEditingComponent(data);
     } else if (e.type === 'click') {
       this.handleEvent_click(e);
     }
   }
 
   handleEvent_click(e) {
-    const clickTarget = e.composedPath();
-    if (!clickTarget.includes(this.container)) {
-      for (let i = 0, len = this.components.length; i < len; i++) {
-        const component = this.components[i];
-        if (clickTarget.includes(component.container)) {
-          this.setEditingComponent(component);
-          return;
-        }
-      }
-    } else {
-      const action = e.target.dataset.action;
-      if (action !== undefined) {
-        if (this[action] !== undefined) {
-          this[action](e);
-          e.stopImmediatePropagation();
-        } else {
-          throw new Error(`There is no such action: ${action}`);
-        }
+    const action = e.target.dataset.action;
+    if (action !== undefined) {
+      if (this[action] !== undefined) {
+        this[action](e);
+        e.stopImmediatePropagation();
+      } else {
+        throw new Error(`There is no such action: ${action}`);
       }
     }
-  }
-
-  registerComponent(component) {
-    this.components.push(component);
-  }
-//TODO
-  initChooseComponentListener() {
-    document.body.addEventListener('click', this);
   }
 
   show() {

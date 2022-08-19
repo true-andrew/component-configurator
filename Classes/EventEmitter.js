@@ -1,18 +1,18 @@
-export class EventEmitter {
-  events = {};
+const events = {};
 
+export class EventEmitter {
   on(eventName, fn) {
-    if (!this.events[eventName]) {
-      this.events[eventName] = [];
+    if (!events[eventName]) {
+      events[eventName] = [];
     }
 
-    if (!this.events[eventName].includes(fn)) {
-      this.events[eventName].push(fn);
+    if (!events[eventName].includes(fn)) {
+      events[eventName].push(fn);
     }
   }
 
   emit(eventName, data) {
-    const event = this.events[eventName];
+    const event = events[eventName];
     if (event) {
       for (let i = 0, len = event.length; i < len; i++) {
         const object = event[i];

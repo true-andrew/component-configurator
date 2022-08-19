@@ -2,6 +2,10 @@ body {
     font-family: Roboto, sans-serif;
 }
 
+a {
+    display: block;
+}
+
 #configurator {
     position: fixed;
     top: 0;
