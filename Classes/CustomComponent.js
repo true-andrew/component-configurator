@@ -21,12 +21,12 @@ export class CustomComponent extends EventEmitter {
     if (props === undefined) {
       return;
     }
-    this.getContainerAddEventListener();
+    this.setContainer();
     this.loadProperties(props);
     this.renderComponent();
   }
 
-  getContainerAddEventListener() {
+  setContainer() {
     this.container = document.getElementById(this.componentName);
     this.container.addEventListener('click', this);
   }

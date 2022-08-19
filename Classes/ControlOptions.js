@@ -1,5 +1,5 @@
 import {EventEmitter} from "./EventEmitter.js";
-import {createDOMElement} from "../Helper Functions/helper.js";
+import {createElement, createElementWithClassList} from "../Helper Functions/helper.js";
 
 export class ControlOption extends EventEmitter {
   container = undefined;
@@ -21,8 +21,8 @@ export class ControlOption extends EventEmitter {
   }
 
   createPropContainerWithTitle(title) {
-    const propContainer = createDOMElement('div', 'form__group');
-    const labelElement = createDOMElement('label', 'form__label', title);
+    const propContainer = createElementWithClassList('div', '', ['form__group']);
+    const labelElement = createElementWithClassList('label', title, ['form__label']);
     labelElement.htmlFor = this.name;
     propContainer.append(labelElement);
     return propContainer;
@@ -51,10 +51,9 @@ export class ControlOptionInput extends ControlOption {
   }
 
   createInputElement(type, value) {
-    const inputElement = document.createElement('input');
+    const inputElement = createElementWithClassList('input', '', ['form__field']);
     inputElement.max = this.max;
     inputElement.min = this.min;
-    inputElement.classList.add('form__field');
     inputElement.id = this.name;
     inputElement.required = true;
     inputElement.type = type;
@@ -79,11 +78,11 @@ export class ControlOptionSelect extends ControlOption {
   }
 
   createSelectElement() {
-    const selectElement = createDOMElement('select', 'form__field');
+    const selectElement = createElementWithClassList('select', '', ['form__field']);
 
     for (let i = 0, len = this.options.length; i < len; i++) {
       const optionName = this.options[i];
-      const optionEl = createDOMElement('option', undefined, optionName);
+      const optionEl = createElement('option', optionName);
       if (optionName === this.value) {
         optionEl.selected = true;
       }
@@ -156,7 +155,7 @@ export class ControlOptionArray extends ControlOptionInput {
         this.propsContainer.append(container);
       }
 
-      const rectangle = createDOMElement('div', 'advanced_figure');
+      const rectangle = createElementWithClassList('div', '', ['advanced_figure']);
       this.propsContainer.append(rectangle);
     } else if (this.mode === 'simple') {
       this.propsContainer.classList.remove('advanced_container');
@@ -169,11 +168,11 @@ export class ControlOptionArray extends ControlOptionInput {
   }
 
   createControlOptionArray(title) {
-    const container = createDOMElement('fieldset', 'form__row');
-    const legend = createDOMElement('legend', undefined, title);
+    const container = createElementWithClassList('fieldset', '', ['form__row']);
+    const legend = createElement('legend', title);
     legend.addEventListener('click', this);
     container.append(legend);
-    this.propsContainer = document.createElement('div');
+    this.propsContainer = createElement('div', '');
     return container;
   }
 }
@@ -188,9 +187,9 @@ export class ControlOptionTextarea extends ControlOption {
     const container = super.createPropContainerWithTitle(title);
     const label = container.firstChild;
     label.classList.add('form__label-textarea');
-    const textarea = createDOMElement('textarea', 'form__textarea');
-    super.initEventListener(textarea);
+    const textarea = createElementWithClassList('textarea', '', ['form__textarea']);
     textarea.value = this.value;
+    super.initEventListener(textarea);
     container.prepend(textarea);
     return container;
   }
