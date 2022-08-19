@@ -1,10 +1,17 @@
 import {EventEmitter} from "./EventEmitter.js";
 import {ControlOptionArray, ControlOptionInput, ControlOptionSelect, ControlOptionTextarea} from "./ControlOptions.js";
-import {createDOMElement} from "../Helper Functions/helper.js";
+import {
+  createDOMElement,
+  createElement,
+  createElementWithClassList,
+  createElementWithClassListAndDataset
+} from "../Helper Functions/helper.js";
 
 class ComponentConfigurator extends EventEmitter {
   editingComponent = undefined;
   container = undefined;
+  currentTab = undefined;
+  tabs = [];
 
   constructor(id) {
     super();
@@ -52,19 +59,19 @@ class ComponentConfigurator extends EventEmitter {
     if (e.target.classList.contains('form_tab_title-active')) {
       return;
     }
-    const prevActiveTitle = document.getElementsByClassName('form__tab_title-active')[0];
-    prevActiveTitle.classList.remove('form__tab_title-active');
-    const prevTab = document.getElementById(prevActiveTitle.dataset.tab);
-    prevTab.classList.remove('form__tab_active');
+    this.currentTab.title.classList.remove('form__tab_title-active');
+    this.currentTab.container.classList.remove('form__tab_active');
 
-    e.target.classList.add('form__tab_title-active');
-    const curTab = document.getElementById(e.target.dataset.tab);
-    curTab.classList.add('form__tab_active');
+    this.currentTab.title = e.target;
+    this.currentTab.container = this.tabs[this.currentTab.title.dataset.tab];
+
+    this.currentTab.title.classList.add('form__tab_title-active');
+    this.currentTab.container.classList.add('form__tab_active');
   }
 
   renderForm(form) {
-    const header = createDOMElement('h2', undefined, 'Configurator');
-    const closeBtn = createDOMElement('button', 'close-btn', 'Close', {
+    const header = createElement('h2', 'Configurator');
+    const closeBtn = createElementWithClassListAndDataset('button', 'Close', ['close-btn'], {
       'action': 'hide'
     });
     closeBtn.addEventListener('click', this);
@@ -78,6 +85,7 @@ class ComponentConfigurator extends EventEmitter {
       return;
     }
     this.editingComponent = component;
+    this.tabs = [];
     const categories = this.findPropCategories(component.properties);
     const form = this.createForm(categories);
     this.renderForm(form);
@@ -105,34 +113,45 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   createForm(categories) {
-    const form = createDOMElement('form', 'form');
+    const form = createElementWithClassList('form', '', ['form']);
 
     const iterableCategories = Object.keys(categories);
-    const tabs = createDOMElement('fieldset', 'tabs');
+    const tabs = createElementWithClassList('fieldset', '', ['tabs']);
 
     for (let i = 0, len = iterableCategories.length; i < len; i++) {
       const name = iterableCategories[i];
-      const category = createDOMElement('fieldset', 'form__tab');
-      category.id = 'tab-' + i;
-      const tabTitle = createDOMElement('h4', 'form__tab-title', name, {
-        'action': 'changeTab',
-        'tab': 'tab-' + i,
-      });
+
+      let tabContainer;
+      let tabTitle;
 
       if (i === 0) {
-        category.classList.add('form__tab_active');
-        tabTitle.classList.add('form__tab_title-active');
+        tabContainer = createElementWithClassList('fieldset', '', ['form__tab', 'form__tab_active']);
+        tabTitle = createElementWithClassListAndDataset('h4', name, ['form__tab-title', 'form__tab_title-active'], {
+          'action': 'changeTab',
+          'tab': i,
+        });
+        this.currentTab = {
+          title: tabTitle,
+          container: tabContainer
+        }
+      } else {
+        tabContainer = createElementWithClassList('fieldset', '', ['form__tab']);
+        tabTitle = createElementWithClassListAndDataset('h4', name, ['form__tab-title'], {
+          'action': 'changeTab',
+          'tab': i,
+        });
       }
 
+      this.tabs.push(tabContainer);
       tabTitle.addEventListener('click', this);
       tabs.append(tabTitle);
 
       for (let j = 0, len = categories[name].length; j < len; j++) {
         const propContainer = categories[name][j].container;
-        category.append(propContainer);
+        tabContainer.append(propContainer);
       }
 
-      form.append(category);
+      form.append(tabContainer);
     }
 
     form.prepend(tabs);
