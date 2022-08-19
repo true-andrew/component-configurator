@@ -52,8 +52,12 @@ export class ControlOptionInput extends ControlOption {
 
   createInputElement(type, value) {
     const inputElement = createDOMElement('input', '', 'form__field');
-    inputElement.max = this.max;
-    inputElement.min = this.min;
+
+    if (this.max && this.min) {
+      inputElement.max = this.max;
+      inputElement.min = this.min;
+    }
+
     inputElement.id = this.name;
     inputElement.required = true;
     inputElement.type = type;
