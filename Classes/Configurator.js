@@ -51,7 +51,7 @@ class ComponentConfigurator extends EventEmitter {
   }
 
   changeTab(e) {
-    if (e.target.classList.contains('form_tab_title-active')) {
+    if (e.target === this.currentTab.title) {
       return;
     }
     this.currentTab.title.classList.remove('form__tab_title-active');
